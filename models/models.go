@@ -5,7 +5,41 @@ import (
 	_ "github.com/lib/pq"
 )
 
-type Hotel struct {
+type User struct {
+	gorm.Model
+	Name    string
+	Phone   string
+	Address string
+	Email   string
+	Orders  []Order
+}
+type Order struct {
+	gorm.Model
+	UserId       uint
+	AgentId      uint
+	RestaurantId uint
+	OrderItems   []OrderItem
+}
+
+type OrderItem struct {
+	gorm.Model
+	DishId   int
+	Quantity int
+	OrderId  int
+}
+type Dish struct {
+	gorm.Model
+	Name         string
+	Description  string
+	Image        string
+	Price        int
+	RestaurantId uint
+	IsAvailable  bool
+	IsVeg        bool
+	Cuisine      string
+	Category     string
+}
+type Restaurant struct {
 	gorm.Model
 	Name     string
 	Address  string
@@ -13,29 +47,8 @@ type Hotel struct {
 	Email    string
 	Password string
 	IsActive bool
-	Dishes   *Dish
-	Orders   *Order
-}
-
-type Dish struct {
-	gorm.Model
-	Name        string
-	Description string
-	Image       string
-	Price       int
-	IsAvailable bool
-	IsVeg       bool
-	Cuisine     string
-	Category    string
-}
-
-type User struct {
-	gorm.Model
-	Name    string
-	Phone   string
-	Address string
-	Email   string
-	Orders  *Order
+	Dishes   []Dish
+	Orders   []Order
 }
 
 type Agent struct {
@@ -46,29 +59,4 @@ type Agent struct {
 	Email          string
 	IsActive       bool
 	CurrentOrderId string
-	Orders         *Order
-}
-
-type Order struct {
-	gorm.Model
-	UserId     uint
-	AgentId    uint
-	HotelId    uint
-	InvoiceId  uint
-	OrderItems *Order
-}
-
-type OrderItem struct {
-	gorm.Model
-	DishId   uint
-	Quantity int
-	OrderId  uint
-}
-
-type Invoice struct {
-	gorm.Model
-	UserId       uint
-	PaymentMode  string
-	Total        int
-	TransactioId uint
 }
