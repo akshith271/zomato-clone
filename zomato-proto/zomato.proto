@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+option go_package = "zomato/zomato-proto/proto";
+
+package zomatoDB;
+
+//defining our CRUD methods
+service ZomatoDatabaseCrud {
+    rpc CreateUser(NewUser) returns (User) {} 
+    rpc ReadUser(VoidUserRequest) returns (AllUsers){} 
+    rpc UpdateUser(User) returns (User) {} 
+}
+//User schema
+message User{
+    int64 id=1;
+    string name=2 ;
+    string address=3;
+    string email=4;
+}
+
+//Schema for the newly created User
+message NewUser {
+    int64 id=1;
+    string name=2 ;
+    string address=3;
+    string email=4;
+}
+
+//to make sure that the request is not nil
+message VoidUserRequest{
+}
+
+//to make sure that the response is not nil
+message VoidUserResponse{
+}
+
+message AllUsers {
+    repeated User users=1; //group of slices
+}
