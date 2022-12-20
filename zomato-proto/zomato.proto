@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+option go_package = "mock-grpc/zomato-proto/proto";
+
+package zomatoDB;
+
+service ZomatoDatabaseCrud {
+    //user rpc
+    rpc CreateUser(NewUser) returns (User) {} 
+    rpc UpdateUser(User) returns (User){}
+    rpc GetUserOrders(User) returns (UserOrder){}
+
+    //restaurant rpc
+    rpc CreateRestaurant(NewRestaurant) returns (Restaurant){}
+
+    //menu rpc
+    rpc CreateDish(NewDish) returns (Dish){}
+    rpc UpdateDish(Dish) returns (Dish){}
+    rpc DeleteDish(Dish) returns (VoidDishResponse){}
+}
+
+message User{
+    int64 id=1;
+    string name=2 ;
+    string phone = 5;
+    string address=3;
+    string email=4;
+}
+
+message NewUser {
+    int64 id=1;
+    string name=2 ;
+    string phone=5;
+    string address=3;
+    string email=4;
+}
+
+message VoidUserRequest{}
+
+message OrderItem {
+	int64 DishId=1;
+	int64 Quantity=2;
+}
+message UserOrder{
+    repeated OrderItem orderItems = 1;
+}
+
+message NewRestaurant{
+    string Name = 1;     
+    string Address = 2; 
+	string Timings = 3; 
+	string Email   = 4; 
+	string Password =5;
+	bool IsActive = 6;
+}
+
+message Restaurant{
+    string Name = 1;     
+    string Address = 2; 
+	string Timings = 3; 
+	string Email   = 4; 
+	string Password =5;
+	bool IsActive = 6;
+}
+
+message NewDish{
+    string Name=1;        
+	string Description=2; 
+	string Image =3;      
+	int64 Price=4;        
+	int64 RestaurantId=5;
+	bool IsAvailable=6;
+	bool IsVeg=7;      
+	string Cuisine =8;     
+	string Category =9;    
+}
+message Dish{
+    string Name=1;        
+	string Description=2; 
+	string Image =3;      
+	int64 Price=4;        
+	int64 RestaurantId=5;
+	bool IsAvailable=6;
+	bool IsVeg=7;      
+	string Cuisine =8;     
+	string Category =9;    
+}
+
+message VoidDishResponse{}
+
