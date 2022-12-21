@@ -9,11 +9,11 @@ import (
 func CreateRestaurant(c pb.ZomatoDatabaseCrudClient, ctx context.Context) {
 	//create Restaurant from client
 	new_Restaurant, err := c.CreateRestaurant(ctx, &pb.NewRestaurant{
-		Name:     "sri kanya",
-		Address:  "sec bad",
+		Name:     "mehfil",
+		Address:  "jubilee hills",
 		Timings:  "9-9",
-		Email:    "srikanya@gmail.com",
-		Password: "2345678",
+		Email:    "mehfil@gmail.com",
+		Password: "7654",
 		IsActive: true})
 	if err != nil {
 		log.Fatal(err.Error())

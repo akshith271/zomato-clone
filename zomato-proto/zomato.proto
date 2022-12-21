@@ -12,6 +12,8 @@ service ZomatoDatabaseCrud {
 
     //restaurant rpc
     rpc CreateRestaurant(NewRestaurant) returns (Restaurant){}
+    rpc GetRestaurantMenu(RestaurantMenuRequest) returns (Menu){}
+    rpc UpdateRestaurant(Restaurant) returns (Restaurant){}
 
     //menu rpc
     rpc CreateDish(NewDish) returns (Dish){}
@@ -34,15 +36,15 @@ message NewUser {
     string address=3;
     string email=4;
 }
-
+message UserOrder{
+    repeated OrderItem orderItems = 1;
+}
 message VoidUserRequest{}
+
 
 message OrderItem {
 	int64 DishId=1;
 	int64 Quantity=2;
-}
-message UserOrder{
-    repeated OrderItem orderItems = 1;
 }
 
 message NewRestaurant{
@@ -87,4 +89,12 @@ message Dish{
 }
 
 message VoidDishResponse{}
+
+
+message RestaurantMenuRequest{
+    int64 RestaurantID = 1;
+}
+message Menu{
+    repeated Dish dishes = 1;
+}
 

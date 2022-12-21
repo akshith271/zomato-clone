@@ -45,12 +45,8 @@ func (s *ZomatoServer) UpdateDish(ctx context.Context, in *pb.Dish) (*pb.Dish, e
 	}, nil
 }
 
-func (s *ZomatoServer) DeleteDish(ctx context.Context, in *pb.Dish) (*pb.Dish, error) {
+func (s *ZomatoServer) DeleteDish(ctx context.Context, in *pb.Dish) (*pb.VoidDishResponse, error) {
 	log.Printf("Delete Dish method called from server side")
 	s.Db.Where("name=?", in.GetName()).Delete(&model.Dish{})
-	return &pb.Dish{
-		Name:        in.GetName(),
-		Price:       in.GetPrice(),
-		Description: in.GetDescription(),
-	}, nil
+	return &pb.VoidDishResponse{}, nil
 }

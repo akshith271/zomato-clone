@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"mock-grpc/pkg/client/menu"
+	"mock-grpc/pkg/client/restaurants"
 	pb "mock-grpc/zomato-proto"
 
 	"google.golang.org/grpc"
@@ -34,7 +34,10 @@ func main() {
 	// user.GetUserOrders(C, Ctx)
 
 	// restaurants.CreateRestaurant(C, Ctx)
+	// restaurants.GetRestaurantMenu(C, Ctx, 1)
+	restaurants.UpdateRestaurant(C, Ctx, "mehfil", "banjara hills")
+
 	// menu.CreateDish(C, Ctx)
 	// menu.UpdateDish(C, Ctx, "lays", 500)
-	menu.DeleteDish(C, Ctx, "Tikka")
+	// menu.DeleteDish(C, Ctx, "Tikka")
 }

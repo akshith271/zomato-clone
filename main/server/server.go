@@ -4,12 +4,12 @@ import (
 	"log"
 	"net"
 
-	connection "mock-grpc/connection"
-	pb "mock-grpc/zomato-proto"
-
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
+	connection "mock-grpc/connection"
+	server "mock-grpc/pkg/server"
+	pb "mock-grpc/zomato-proto"
 )
 
 // declaring the port number
@@ -17,10 +17,10 @@ const (
 	port = ":50051"
 )
 
-type ZomatoServer struct {
-	pb.UnimplementedZomatoDatabaseCrudServer
-	Db *gorm.DB //linking to db via this struct
-}
+// type ZomatoServer struct {
+// 	pb.UnimplementedZomatoDatabaseCrudServer
+// 	Db *gorm.DB //linking to db via this struct
+// }
 
 func main() {
 
@@ -41,7 +41,7 @@ func main() {
 	//creating a new server
 	s := grpc.NewServer()
 
-	pb.RegisterZomatoDatabaseCrudServer(s, ZomatoServer{
+	pb.RegisterZomatoDatabaseCrudServer(s, &server.ZomatoServer{
 		Db: connection,
 	})
 

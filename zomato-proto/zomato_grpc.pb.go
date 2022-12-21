@@ -28,6 +28,8 @@ type ZomatoDatabaseCrudClient interface {
 	GetUserOrders(ctx context.Context, in *User, opts ...grpc.CallOption) (*UserOrder, error)
 	// restaurant rpc
 	CreateRestaurant(ctx context.Context, in *NewRestaurant, opts ...grpc.CallOption) (*Restaurant, error)
+	GetRestaurantMenu(ctx context.Context, in *RestaurantMenuRequest, opts ...grpc.CallOption) (*Menu, error)
+	UpdateRestaurant(ctx context.Context, in *Restaurant, opts ...grpc.CallOption) (*Restaurant, error)
 	// menu rpc
 	CreateDish(ctx context.Context, in *NewDish, opts ...grpc.CallOption) (*Dish, error)
 	UpdateDish(ctx context.Context, in *Dish, opts ...grpc.CallOption) (*Dish, error)
@@ -78,6 +80,24 @@ func (c *zomatoDatabaseCrudClient) CreateRestaurant(ctx context.Context, in *New
 	return out, nil
 }
 
+func (c *zomatoDatabaseCrudClient) GetRestaurantMenu(ctx context.Context, in *RestaurantMenuRequest, opts ...grpc.CallOption) (*Menu, error) {
+	out := new(Menu)
+	err := c.cc.Invoke(ctx, "/zomatoDB.ZomatoDatabaseCrud/GetRestaurantMenu", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *zomatoDatabaseCrudClient) UpdateRestaurant(ctx context.Context, in *Restaurant, opts ...grpc.CallOption) (*Restaurant, error) {
+	out := new(Restaurant)
+	err := c.cc.Invoke(ctx, "/zomatoDB.ZomatoDatabaseCrud/UpdateRestaurant", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *zomatoDatabaseCrudClient) CreateDish(ctx context.Context, in *NewDish, opts ...grpc.CallOption) (*Dish, error) {
 	out := new(Dish)
 	err := c.cc.Invoke(ctx, "/zomatoDB.ZomatoDatabaseCrud/CreateDish", in, out, opts...)
@@ -115,6 +135,8 @@ type ZomatoDatabaseCrudServer interface {
 	GetUserOrders(context.Context, *User) (*UserOrder, error)
 	// restaurant rpc
 	CreateRestaurant(context.Context, *NewRestaurant) (*Restaurant, error)
+	GetRestaurantMenu(context.Context, *RestaurantMenuRequest) (*Menu, error)
+	UpdateRestaurant(context.Context, *Restaurant) (*Restaurant, error)
 	// menu rpc
 	CreateDish(context.Context, *NewDish) (*Dish, error)
 	UpdateDish(context.Context, *Dish) (*Dish, error)
@@ -137,6 +159,12 @@ func (UnimplementedZomatoDatabaseCrudServer) GetUserOrders(context.Context, *Use
 }
 func (UnimplementedZomatoDatabaseCrudServer) CreateRestaurant(context.Context, *NewRestaurant) (*Restaurant, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateRestaurant not implemented")
+}
+func (UnimplementedZomatoDatabaseCrudServer) GetRestaurantMenu(context.Context, *RestaurantMenuRequest) (*Menu, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRestaurantMenu not implemented")
+}
+func (UnimplementedZomatoDatabaseCrudServer) UpdateRestaurant(context.Context, *Restaurant) (*Restaurant, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateRestaurant not implemented")
 }
 func (UnimplementedZomatoDatabaseCrudServer) CreateDish(context.Context, *NewDish) (*Dish, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateDish not implemented")
@@ -232,6 +260,42 @@ func _ZomatoDatabaseCrud_CreateRestaurant_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ZomatoDatabaseCrud_GetRestaurantMenu_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RestaurantMenuRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ZomatoDatabaseCrudServer).GetRestaurantMenu(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zomatoDB.ZomatoDatabaseCrud/GetRestaurantMenu",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ZomatoDatabaseCrudServer).GetRestaurantMenu(ctx, req.(*RestaurantMenuRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ZomatoDatabaseCrud_UpdateRestaurant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Restaurant)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ZomatoDatabaseCrudServer).UpdateRestaurant(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zomatoDB.ZomatoDatabaseCrud/UpdateRestaurant",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ZomatoDatabaseCrudServer).UpdateRestaurant(ctx, req.(*Restaurant))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ZomatoDatabaseCrud_CreateDish_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(NewDish)
 	if err := dec(in); err != nil {
@@ -308,6 +372,14 @@ var ZomatoDatabaseCrud_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateRestaurant",
 			Handler:    _ZomatoDatabaseCrud_CreateRestaurant_Handler,
+		},
+		{
+			MethodName: "GetRestaurantMenu",
+			Handler:    _ZomatoDatabaseCrud_GetRestaurantMenu_Handler,
+		},
+		{
+			MethodName: "UpdateRestaurant",
+			Handler:    _ZomatoDatabaseCrud_UpdateRestaurant_Handler,
 		},
 		{
 			MethodName: "CreateDish",
