@@ -8,6 +8,7 @@ service ZomatoDatabaseCrud {
     //user rpc
     rpc CreateUser(NewUser) returns (User) {} 
     rpc UpdateUser(User) returns (User){}
+    rpc GetUsers(VoidUserRequest) returns (AllUsers){}
     rpc GetUserOrders(User) returns (UserOrder){}
 
     //restaurant rpc
@@ -19,6 +20,11 @@ service ZomatoDatabaseCrud {
     rpc CreateDish(NewDish) returns (Dish){}
     rpc UpdateDish(Dish) returns (Dish){}
     rpc DeleteDish(Dish) returns (VoidDishResponse){}
+
+    //agent rpc
+    rpc CreateAgent(NewAgent) returns (Agent){}
+    rpc UpdateAgentStatus(AgentStatus) returns (AgentStatus){}
+    rpc GetDeliveryOrders(Agent) returns (AgentOrders) {}
 }
 
 message User{
@@ -38,6 +44,9 @@ message NewUser {
 }
 message UserOrder{
     repeated OrderItem orderItems = 1;
+}
+message AllUsers{
+    repeated User AllUsers = 1;
 }
 message VoidUserRequest{}
 
@@ -98,3 +107,31 @@ message Menu{
     repeated Dish dishes = 1;
 }
 
+message NewAgent{
+    string Name = 1;
+    string Phone = 2;
+    string Address = 3;
+    string Email = 4;
+    bool IsActive = 5;
+    int64 CurrentOrderId = 6;
+}
+
+message Agent{
+    int64 Id = 7;
+    string Name = 1;
+    string Phone = 2;
+    string Address = 3;
+    string Email = 4;
+    bool IsActive = 5;
+    int64 CurrentOrderId = 6;
+}
+message AgentStatus{
+    string Name = 1;
+    bool IsActive = 2;
+}
+message OrderID{
+    int64 Id = 1;
+}
+message AgentOrders{
+    repeated OrderID OrderID=1;
+}

@@ -24,16 +24,16 @@ func (s *ZomatoServer) CreateUser(ctx context.Context, in *pb.NewUser) (*pb.User
 		Email:   in.GetEmail()}, nil
 }
 
-// func (s *ZomatoServer) GetUser(ctx context.Context, in *pb.VoidUserRequest) (*pb.AllUsers, error) {
-// 	log.Printf("readUser method called from server side")
-// 	totalUser := []model.User{}
-// 	totalUserData := []*pb.User{}
-// 	s.Db.Find(&totalUser)
-// 	for _, user := range totalUser {
-// 		totalUserData = append(totalUserData, &pb.User{Name: user.Name, Address: user.Address, Email: user.Email})
-// 	}
-// 	return &pb.AllUsers{Users: totalUserData}, nil
-// }
+func (s *ZomatoServer) GetUsers(ctx context.Context, in *pb.VoidUserRequest) (*pb.AllUsers, error) {
+	log.Printf("readUser method called from server side")
+	totalUser := []model.User{}
+	totalUserData := []*pb.User{}
+	s.Db.Find(&totalUser)
+	for _, user := range totalUser {
+		totalUserData = append(totalUserData, &pb.User{Name: user.Name, Address: user.Address, Email: user.Email})
+	}
+	return &pb.AllUsers{AllUsers: totalUserData}, nil
+}
 
 func (s *ZomatoServer) UpdateUser(ctx context.Context, in *pb.User) (*pb.User, error) {
 	log.Printf("updateUser method called from server side")
