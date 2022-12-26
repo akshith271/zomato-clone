@@ -4,12 +4,14 @@ import (
 	"log"
 	"net"
 
+	connection "mock-grpc/connection"
+	"mock-grpc/pkg/database"
+	server "mock-grpc/pkg/server"
+	pb "mock-grpc/zomato-proto"
+
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
-	connection "mock-grpc/connection"
-	server "mock-grpc/pkg/server"
-	pb "mock-grpc/zomato-proto"
 )
 
 // declaring the port number
@@ -42,8 +44,11 @@ func main() {
 	s := grpc.NewServer()
 
 	pb.RegisterZomatoDatabaseCrudServer(s, &server.ZomatoServer{
-		Db: connection,
-	})
+		Db: database.DBClient{
+			Db: connection,
+		},
+	},
+	)
 
 	//if connection fails
 	if err := s.Serve(listener); err != nil {

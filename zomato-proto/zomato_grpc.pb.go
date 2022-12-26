@@ -38,7 +38,6 @@ type ZomatoDatabaseCrudClient interface {
 	// agent rpc
 	CreateAgent(ctx context.Context, in *NewAgent, opts ...grpc.CallOption) (*Agent, error)
 	UpdateAgentStatus(ctx context.Context, in *AgentStatus, opts ...grpc.CallOption) (*AgentStatus, error)
-	GetDeliveryOrders(ctx context.Context, in *Agent, opts ...grpc.CallOption) (*AgentOrders, error)
 }
 
 type zomatoDatabaseCrudClient struct {
@@ -157,15 +156,6 @@ func (c *zomatoDatabaseCrudClient) UpdateAgentStatus(ctx context.Context, in *Ag
 	return out, nil
 }
 
-func (c *zomatoDatabaseCrudClient) GetDeliveryOrders(ctx context.Context, in *Agent, opts ...grpc.CallOption) (*AgentOrders, error) {
-	out := new(AgentOrders)
-	err := c.cc.Invoke(ctx, "/zomatoDB.ZomatoDatabaseCrud/GetDeliveryOrders", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // ZomatoDatabaseCrudServer is the server API for ZomatoDatabaseCrud service.
 // All implementations must embed UnimplementedZomatoDatabaseCrudServer
 // for forward compatibility
@@ -186,7 +176,6 @@ type ZomatoDatabaseCrudServer interface {
 	// agent rpc
 	CreateAgent(context.Context, *NewAgent) (*Agent, error)
 	UpdateAgentStatus(context.Context, *AgentStatus) (*AgentStatus, error)
-	GetDeliveryOrders(context.Context, *Agent) (*AgentOrders, error)
 	mustEmbedUnimplementedZomatoDatabaseCrudServer()
 }
 
@@ -229,9 +218,6 @@ func (UnimplementedZomatoDatabaseCrudServer) CreateAgent(context.Context, *NewAg
 }
 func (UnimplementedZomatoDatabaseCrudServer) UpdateAgentStatus(context.Context, *AgentStatus) (*AgentStatus, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateAgentStatus not implemented")
-}
-func (UnimplementedZomatoDatabaseCrudServer) GetDeliveryOrders(context.Context, *Agent) (*AgentOrders, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetDeliveryOrders not implemented")
 }
 func (UnimplementedZomatoDatabaseCrudServer) mustEmbedUnimplementedZomatoDatabaseCrudServer() {}
 
@@ -462,24 +448,6 @@ func _ZomatoDatabaseCrud_UpdateAgentStatus_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ZomatoDatabaseCrud_GetDeliveryOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Agent)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ZomatoDatabaseCrudServer).GetDeliveryOrders(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/zomatoDB.ZomatoDatabaseCrud/GetDeliveryOrders",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ZomatoDatabaseCrudServer).GetDeliveryOrders(ctx, req.(*Agent))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // ZomatoDatabaseCrud_ServiceDesc is the grpc.ServiceDesc for ZomatoDatabaseCrud service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -534,10 +502,6 @@ var ZomatoDatabaseCrud_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateAgentStatus",
 			Handler:    _ZomatoDatabaseCrud_UpdateAgentStatus_Handler,
-		},
-		{
-			MethodName: "GetDeliveryOrders",
-			Handler:    _ZomatoDatabaseCrud_GetDeliveryOrders_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

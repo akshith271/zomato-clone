@@ -43,7 +43,7 @@ func main() {
 	// menu.DeleteDish(C, Ctx, "Tikka")
 
 	// agent.CreateAgent(C, Ctx)
-	// agent.UpdateAgentStatus(C, Ctx, "Navdeep", false)
-	agent.GetDeliveryOrders(C, Ctx, 1)
+	agent.UpdateAgentStatus(C, Ctx, "Navdeep", false)
+	// agent.GetDeliveryOrders(C, Ctx, 1)
 
 }

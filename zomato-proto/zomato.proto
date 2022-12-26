@@ -9,22 +9,21 @@ service ZomatoDatabaseCrud {
     rpc CreateUser(NewUser) returns (User) {} 
     rpc UpdateUser(User) returns (User){}
     rpc GetUsers(VoidUserRequest) returns (AllUsers){}
-    rpc GetUserOrders(User) returns (UserOrder){}
+    rpc GetUserOrders(User) returns (UserOrder){} //have to test this
 
     //restaurant rpc
     rpc CreateRestaurant(NewRestaurant) returns (Restaurant){}
-    rpc GetRestaurantMenu(RestaurantMenuRequest) returns (Menu){}
+    rpc GetRestaurantMenu(RestaurantMenuRequest) returns (Menu){} 
     rpc UpdateRestaurant(Restaurant) returns (Restaurant){}
 
     //menu rpc
     rpc CreateDish(NewDish) returns (Dish){}
     rpc UpdateDish(Dish) returns (Dish){}
-    rpc DeleteDish(Dish) returns (VoidDishResponse){}
+    rpc DeleteDish(Dish) returns (VoidDishResponse){} 
 
     //agent rpc
     rpc CreateAgent(NewAgent) returns (Agent){}
     rpc UpdateAgentStatus(AgentStatus) returns (AgentStatus){}
-    rpc GetDeliveryOrders(Agent) returns (AgentOrders) {}
 }
 
 message User{

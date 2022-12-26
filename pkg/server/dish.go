@@ -10,6 +10,7 @@ import (
 
 func (s *ZomatoServer) CreateDish(ctx context.Context, in *pb.NewDish) (*pb.Dish, error) {
 	log.Printf("createDish method called from server side")
+
 	newDish := model.Dish{
 		Name:         in.GetName(),
 		Description:  in.GetDescription(),
@@ -21,7 +22,7 @@ func (s *ZomatoServer) CreateDish(ctx context.Context, in *pb.NewDish) (*pb.Dish
 		Cuisine:      in.GetCuisine(),
 		Category:     in.GetCategory(),
 	}
-	s.Db.Save(&newDish)
+	s.Db.CreateDish(newDish)
 	fmt.Println(newDish)
 	return &pb.Dish{
 		Name:         in.GetName(),
@@ -37,16 +38,21 @@ func (s *ZomatoServer) CreateDish(ctx context.Context, in *pb.NewDish) (*pb.Dish
 
 func (s *ZomatoServer) UpdateDish(ctx context.Context, in *pb.Dish) (*pb.Dish, error) {
 	log.Printf("updateDish method called from server side")
-	s.Db.Model(&model.Dish{}).Where("name=?", in.GetName()).Update("price", in.GetPrice())
+	DishToBeUpdated := model.Dish{
+		Description: in.GetDescription(),
+		Name:        in.GetName(),
+		Price:       int(in.GetPrice()),
+	}
+	err := s.Db.UpdateDish(DishToBeUpdated)
 	return &pb.Dish{
 		Name:        in.GetName(),
 		Price:       in.GetPrice(),
 		Description: in.GetDescription(),
-	}, nil
+	}, err
 }
 
 func (s *ZomatoServer) DeleteDish(ctx context.Context, in *pb.Dish) (*pb.VoidDishResponse, error) {
 	log.Printf("Delete Dish method called from server side")
-	s.Db.Where("name=?", in.GetName()).Delete(&model.Dish{})
+	s.Db.DeleteDish("Tikka")
 	return &pb.VoidDishResponse{}, nil
 }
