@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"mock-grpc/pkg/client/agent"
+	user "mock-grpc/pkg/client/users"
 	pb "mock-grpc/zomato-proto"
 
 	"google.golang.org/grpc"
@@ -19,6 +19,7 @@ const (
 func main() {
 
 	connection, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
+
 	if err != nil {
 		log.Fatal("Connection Failed", err.Error())
 	}
@@ -43,7 +44,8 @@ func main() {
 	// menu.DeleteDish(C, Ctx, "Tikka")
 
 	// agent.CreateAgent(C, Ctx)
-	agent.UpdateAgentStatus(C, Ctx, "Navdeep", false)
+	// agent.UpdateAgentStatus(C, Ctx, "Navdeep", false)
+	user.PlaceOrder(C, Ctx)
 	// agent.GetDeliveryOrders(C, Ctx, 1)
 
 }

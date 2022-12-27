@@ -3,6 +3,7 @@ package server
 import (
 	"mock-grpc/mocks"
 	model "mock-grpc/models"
+	"mock-grpc/utils"
 	pb "mock-grpc/zomato-proto"
 
 	"context"
@@ -12,6 +13,16 @@ import (
 	"github.com/golang/mock/gomock"
 )
 
+var mockOrderRequest = pb.OrderRequest{
+	UserID:       1,
+	RestaurantID: 1,
+}
+var mockOrder = pb.Order{
+	OrderID:      1,
+	AgentID:      6,
+	UserID:       5,
+	RestaurantID: 1,
+}
 var mockUser = model.User{
 	Address: "ullamco labore aliqua",
 	Email:   "esse",
@@ -19,7 +30,14 @@ var mockUser = model.User{
 	Phone:   "velit",
 }
 
-var NewUser = pb.NewUser{
+var mockPlacedAgent = model.Agent{
+	Address: "ullamco labore aliqua",
+	Email:   "esse",
+	Name:    "sunt ut enim incididunt",
+	Phone:   "velit",
+}
+
+var newUser = pb.NewUser{
 	Address: "ullamco labore aliqua",
 	Email:   "esse",
 	Name:    "sunt ut enim incididunt",
@@ -33,7 +51,7 @@ var userToBeUpdated = model.User{
 	Phone:   "velit",
 }
 
-var MockUpdatedUser = pb.User{
+var mockUpdatedUser = pb.User{
 	Address: "ullamco labore aliqua",
 	Email:   "esse",
 	Name:    "sunt ut enim incididunt",
@@ -45,7 +63,7 @@ var mockOrderItem = model.OrderItem{
 	Quantity: 1,
 }
 var emptyMockUser = model.User{}
-var User = pb.User{
+var user = pb.User{
 	Id:      1,
 	Address: "ullamco labore aliqua",
 	Email:   "esse",
@@ -61,11 +79,6 @@ var userOrder = &pb.UserOrder{
 	},
 }
 
-func CheckError(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
 func TestCreateUser(t *testing.T) {
 	controller := gomock.NewController(t)
 	defer controller.Finish()
@@ -73,10 +86,8 @@ func TestCreateUser(t *testing.T) {
 	testUser := ZomatoServer{Db: mockDb}
 	ctx := context.Background()
 	mockDb.EXPECT().CreateUser(mockUser).Return(nil)
-	got, err := testUser.CreateUser(ctx, &NewUser)
-	if err != nil {
-		panic(err)
-	}
+	got, err := testUser.CreateUser(ctx, &newUser)
+	utils.CheckError(err)
 	expected := &pb.User{
 		Address: "ullamco labore aliqua",
 		Email:   "esse",
@@ -97,9 +108,7 @@ func TestGetUsers(t *testing.T) {
 	ctx := context.Background()
 	mockDb.EXPECT().GetUsers().Return([]model.User{mockUser}, nil)
 	got, err := testUser.GetUsers(ctx, &pb.VoidUserRequest{})
-	if err != nil {
-		panic(err)
-	}
+	utils.CheckError(err)
 	result := got.AllUsers
 	expected := []*pb.User{}
 	expected = append(expected, &pb.User{
@@ -121,9 +130,9 @@ func TestUpdateUser(t *testing.T) {
 	testUser := ZomatoServer{Db: mockDb}
 	ctx := context.Background()
 	mockDb.EXPECT().UpdateUser(userToBeUpdated).Return(nil)
-	got, err := testUser.UpdateUser(ctx, &MockUpdatedUser)
+	got, err := testUser.UpdateUser(ctx, &mockUpdatedUser)
 
-	CheckError(err)
+	utils.CheckError(err)
 	expected := &pb.User{
 		Address: "ullamco labore aliqua",
 		Email:   "esse",
@@ -144,18 +153,11 @@ func TestGetUserOrders(t *testing.T) {
 	ctx := context.Background()
 	emptyMockUser.ID = 1
 	mockDb.EXPECT().GetUserOrders(emptyMockUser).Return([]model.OrderItem{mockOrderItem}, nil)
-	got, err := testUser.GetUserOrders(ctx, &User)
-	if err != nil {
-		panic(err)
-	}
+	got, err := testUser.GetUserOrders(ctx, &user)
+	utils.CheckError(err)
 	expected := userOrder
 	if !reflect.DeepEqual(got, expected) {
 		t.Errorf("The Function Returned is not expected one. got %v expected %v",
 			got, expected)
 	}
 }
-
-// 1. database go lo interface lo rayali
-// 2. replace the database call with the mock call written in the interface
-// 3. create _test file
-// 4. replace the content of the functions

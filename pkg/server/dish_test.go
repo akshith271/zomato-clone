@@ -3,6 +3,7 @@ package server
 import (
 	"mock-grpc/mocks"
 	model "mock-grpc/models"
+	"mock-grpc/utils"
 	pb "mock-grpc/zomato-proto"
 
 	"context"
@@ -24,7 +25,7 @@ var mockDish = model.Dish{
 	RestaurantId: 8,
 }
 
-var NewDish = pb.NewDish{
+var newDish = pb.NewDish{
 	Category:     "anim occaecat enim qui eu",
 	Cuisine:      "Excepteur ut incididunt esse non",
 	Description:  "exercitation do ea cillum sed",
@@ -36,13 +37,13 @@ var NewDish = pb.NewDish{
 	RestaurantId: 8,
 }
 
-var DishToBeUpdated = model.Dish{
+var dishToBeUpdated = model.Dish{
 	Description: "exercitation do ea cillum sed",
 	Name:        "qui eiusmod sit",
 	Price:       13078078312,
 }
 
-var MockUpdatedDish = pb.Dish{
+var mockUpdatedDish = pb.Dish{
 	Description: "exercitation do ea cillum sed",
 	Name:        "qui eiusmod sit",
 	Price:       13078078312,
@@ -50,11 +51,6 @@ var MockUpdatedDish = pb.Dish{
 
 var deletedDish = pb.VoidDishResponse{}
 
-func checkError(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
 func TestCreateDish(t *testing.T) {
 	controller := gomock.NewController(t)
 	defer controller.Finish()
@@ -62,10 +58,8 @@ func TestCreateDish(t *testing.T) {
 	testDish := ZomatoServer{Db: mockDb}
 	ctx := context.Background()
 	mockDb.EXPECT().CreateDish(mockDish).Return(nil)
-	got, err := testDish.CreateDish(ctx, &NewDish)
-	if err != nil {
-		panic(err)
-	}
+	got, err := testDish.CreateDish(ctx, &newDish)
+	utils.CheckError(err)
 	expected := &pb.Dish{
 		Category:     "anim occaecat enim qui eu",
 		Cuisine:      "Excepteur ut incididunt esse non",
@@ -89,10 +83,9 @@ func TestUpdateDish(t *testing.T) {
 	mockDb := mocks.NewMockDataBaseLayer(controller)
 	testDish := ZomatoServer{Db: mockDb}
 	ctx := context.Background()
-	mockDb.EXPECT().UpdateDish(DishToBeUpdated).Return(nil)
-	got, err := testDish.UpdateDish(ctx, &MockUpdatedDish)
-
-	CheckError(err)
+	mockDb.EXPECT().UpdateDish(dishToBeUpdated).Return(nil)
+	got, err := testDish.UpdateDish(ctx, &mockUpdatedDish)
+	utils.CheckError(err)
 	expected := &pb.Dish{
 		Description: "exercitation do ea cillum sed",
 		Name:        "qui eiusmod sit",
@@ -114,18 +107,10 @@ func TestDeleteDish(t *testing.T) {
 	mockDb.EXPECT().DeleteDish(DishToBeDeleted).Return(nil)
 	DishToBeDeleted = "Tikka"
 	got, err := testDish.DeleteDish(ctx, &pb.Dish{})
-	// model.CheckError(err)
-	if err != nil {
-		panic(err)
-	}
+	utils.CheckError(err)
 	expected := &pb.VoidDishResponse{}
 	if !reflect.DeepEqual(got, expected) {
 		t.Errorf("The Function Retured is not expected one. got %v expected %v",
 			got, expected)
 	}
 }
-
-// 1. database go lo interface lo rayali
-// 2. replace the database call with the mock call written in the interface
-// 3. create _test file
-// 4. replace the content of the functions

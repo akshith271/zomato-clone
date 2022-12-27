@@ -3,6 +3,7 @@ package Mail
 import (
 	"fmt"
 	"io"
+	"mock-grpc/environment"
 	"net/http"
 	"strings"
 )
@@ -37,8 +38,8 @@ func Mail(email string) {
 	req, _ := http.NewRequest("POST", url, payload)
 
 	req.Header.Add("content-type", "application/json")
-	req.Header.Add("X-RapidAPI-Key", "04e9f7a9f9msh6a6e005a692ad20p163e6fjsna668112a5f00")
-	req.Header.Add("X-RapidAPI-Host", "rapidprod-sendgrid-v1.p.rapidapi.com")
+	req.Header.Add("X-RapidAPI-Key", environment.XRapidAPIKey)
+	req.Header.Add("X-RapidAPI-Host", environment.XRapidAPIHost)
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {

@@ -3,6 +3,7 @@ package server
 import (
 	"mock-grpc/mocks"
 	model "mock-grpc/models"
+	"mock-grpc/utils"
 	"reflect"
 
 	"context"
@@ -20,7 +21,7 @@ var mockAgent = model.Agent{
 	Phone:   "velit",
 }
 
-var NewAgent = pb.NewAgent{
+var newAgent = pb.NewAgent{
 	Address: "ullamco labore aliqua",
 	Email:   "esse",
 	Name:    "sunt ut enim incididunt",
@@ -43,10 +44,8 @@ func TestCreateAgent(t *testing.T) {
 	testAgent := ZomatoServer{Db: mockDb}
 	ctx := context.Background()
 	mockDb.EXPECT().CreateAgent(mockAgent).Return(nil)
-	got, err := testAgent.CreateAgent(ctx, &NewAgent)
-	if err != nil {
-		panic(err)
-	}
+	got, err := testAgent.CreateAgent(ctx, &newAgent)
+	utils.CheckError(err)
 	expected := &pb.Agent{
 		Address: "ullamco labore aliqua",
 		Email:   "esse",
@@ -67,8 +66,7 @@ func TestUpdateAgentStatus(t *testing.T) {
 	ctx := context.Background()
 	mockDb.EXPECT().UpdateAgentStatus(agentStatusToBeUpdated).Return(nil)
 	got, err := testAgent.UpdateAgentStatus(ctx, &mockAgentStatusToBeUpdated)
-
-	CheckError(err)
+	utils.CheckError(err)
 	expected := &pb.AgentStatus{
 		Name:     "Navdeep",
 		IsActive: false,

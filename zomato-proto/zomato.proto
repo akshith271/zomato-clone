@@ -9,7 +9,8 @@ service ZomatoDatabaseCrud {
     rpc CreateUser(NewUser) returns (User) {} 
     rpc UpdateUser(User) returns (User){}
     rpc GetUsers(VoidUserRequest) returns (AllUsers){}
-    rpc GetUserOrders(User) returns (UserOrder){} //have to test this
+    rpc GetUserOrders(User) returns (UserOrder){}
+    rpc PlaceOrder(OrderRequest) returns (Order) {}
 
     //restaurant rpc
     rpc CreateRestaurant(NewRestaurant) returns (Restaurant){}
@@ -134,3 +135,20 @@ message OrderID{
 message AgentOrders{
     repeated OrderID OrderID=1;
 }
+
+message VoidOrderResponse{}
+message OrderRequest{
+    int64 UserID = 1;
+    int64 RestaurantID = 2;
+}
+message Order{
+    int64 OrderID =1;
+    int64 UserID =2;
+    int64 AgentID = 3;
+    int64 RestaurantID = 4;
+}
+// message NewOrder{
+//     int64 Id = 1;
+//     int64 UserId = 1;
+//     int64 AgentId
+// }

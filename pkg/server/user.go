@@ -3,8 +3,10 @@ package server
 import (
 	"context"
 	"log"
+	"math/rand"
 	Mail "mock-grpc/mail"
 	model "mock-grpc/models"
+	"mock-grpc/utils"
 	pb "mock-grpc/zomato-proto"
 )
 
@@ -20,6 +22,7 @@ func (s *ZomatoServer) CreateUser(ctx context.Context, in *pb.NewUser) (*pb.User
 	Mail.Mail(newUser.Email)
 	log.Printf("%v\n ", in.GetEmail())
 	return &pb.User{
+		Id:      in.GetId(),
 		Name:    in.GetName(),
 		Phone:   in.GetPhone(),
 		Address: in.GetAddress(),
@@ -66,4 +69,42 @@ func (s *ZomatoServer) GetUserOrders(ctx context.Context, in *pb.User) (*pb.User
 		})
 	}
 	return &pb.UserOrder{OrderItems: result}, err
+}
+
+func (s *ZomatoServer) PlaceOrder(ctx context.Context, in *pb.OrderRequest) (*pb.Order, error) {
+	log.Printf("PlaceOrder method called from server side")
+	//get all agents who are active
+	//pick one agent who is active at random
+	//extract his id (agent_id)
+	//get the id of the user who is calling this method (user_id)
+	//create a new order with the agent_id and user_id and some restaurant_id
+	//go to that agent record and set the current order as this order
+	//after the workflow, acknowledge with a mail
+	totalAgentData := []*pb.Agent{}
+	totalAgents, err := s.Db.GetAllAgents()
+	for _, agent := range totalAgents {
+		if agent.IsActive == true {
+			totalAgentData = append(totalAgentData, &pb.Agent{
+				Id:             int64(agent.ID),
+				Name:           agent.Name,
+				IsActive:       agent.IsActive,
+				CurrentOrderId: int64(agent.CurrentOrderId),
+			})
+		}
+	}
+	utils.CheckError(err)
+	index := rand.Intn(len(totalAgentData))
+	randomAgentID := uint(totalAgentData[index].Id)
+	userID := uint(in.GetUserID())
+	restaurantID := uint(in.GetRestaurantID())
+	newOrderRequest := model.Order{
+		UserId:       userID,
+		AgentId:      randomAgentID,
+		RestaurantId: restaurantID,
+	}
+	errorResult := s.Db.CreateOrder(newOrderRequest)
+	return &pb.Order{
+		UserID:       in.GetUserID(),
+		RestaurantID: in.GetRestaurantID(),
+	}, errorResult
 }

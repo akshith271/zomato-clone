@@ -12,16 +12,15 @@ type DataBaseLayer interface {
 	GetUsers() ([]models.User, error)
 	UpdateUser(models.User) error
 	GetUserOrders(models.User) ([]models.OrderItem, error)
-
+	CreateOrder(models.Order) error
 	//Agent interface calls
 	CreateAgent(models.Agent) error
 	UpdateAgentStatus(models.Agent) error
-
+	GetAllAgents() ([]models.Agent, error)
 	//Restaurant interface calls
 	CreateRestaurant(models.Restaurant) error
 	GetRestaurantMenu(models.Restaurant) ([]models.Dish, error)
 	UpdateRestaurant(models.Restaurant) error
-
 	//Dishes interface calls
 	CreateDish(models.Dish) error
 	UpdateDish(models.Dish) error
@@ -45,6 +44,7 @@ func (db DBClient) GetUsers() ([]models.User, error) {
 
 func (db DBClient) UpdateUser(user models.User) error {
 	db.Db.Model(&models.User{}).Where("name=?", user.Name).Update("email", user.Email)
+	// db.Db.Updates(&user)
 	return nil
 }
 
@@ -91,3 +91,20 @@ func (db DBClient) UpdateAgentStatus(agent models.Agent) error {
 	db.Db.Model(&models.Agent{}).Where("name=?", agent.Name).Update("is_active", agent.IsActive)
 	return nil
 }
+
+func (db DBClient) GetAllAgents() ([]models.Agent, error) {
+	result := []models.Agent{}
+	db.Db.Find(&result)
+	return result, nil
+}
+
+func (db DBClient) CreateOrder(order models.Order) error {
+	result := db.Db.Save(&order)
+	return result.Error
+}
+
+// func (db DBClient) GetOrders() ([]models.Order, error) {
+// 	result := []models.Order{}
+// 	db.Db.Find(&result)
+// 	return result, nil
+// }
