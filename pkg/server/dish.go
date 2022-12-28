@@ -10,7 +10,6 @@ import (
 
 func (s *ZomatoServer) CreateDish(ctx context.Context, in *pb.NewDish) (*pb.Dish, error) {
 	log.Printf("createDish method called from server side")
-
 	newDish := model.Dish{
 		Name:         in.GetName(),
 		Description:  in.GetDescription(),

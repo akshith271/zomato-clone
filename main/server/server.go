@@ -1,12 +1,14 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net"
 
 	connection "mock-grpc/connection"
 	"mock-grpc/pkg/database"
 	server "mock-grpc/pkg/server"
+	"mock-grpc/utils"
 	pb "mock-grpc/zomato-proto"
 
 	"github.com/jinzhu/gorm"
@@ -19,13 +21,13 @@ const (
 	port = ":50051"
 )
 
-// type ZomatoServer struct {
-// 	pb.UnimplementedZomatoDatabaseCrudServer
-// 	Db *gorm.DB //linking to db via this struct
-// }
+func myInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+	// Call the handler function.
+	resp, err := handler(ctx, req)
+	return resp, err
+}
 
 func main() {
-
 	//creating gorm instance
 	connection.DBinit()
 	listener, err := net.Listen("tcp", port)
@@ -35,23 +37,19 @@ func main() {
 
 	//connecting gorm with grpc
 	connection, err := gorm.Open("postgres", "user=postgres password=root dbname=zomato sslmode=disable")
-	if err != nil {
-		panic(err.Error())
-	}
+	utils.CheckError(err)
 	defer connection.Close()
 
 	//creating a new server
-	s := grpc.NewServer()
-
-	pb.RegisterZomatoDatabaseCrudServer(s, &server.ZomatoServer{
+	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(myInterceptor))
+	zomatoServer := &server.ZomatoServer{
 		Db: database.DBClient{
 			Db: connection,
 		},
-	},
-	)
-
+	}
+	pb.RegisterZomatoDatabaseCrudServer(grpcServer, zomatoServer)
 	//if connection fails
-	if err := s.Serve(listener); err != nil {
+	if err := grpcServer.Serve(listener); err != nil {
 		log.Fatal(err.Error())
 	}
 

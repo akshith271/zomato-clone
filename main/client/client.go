@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	user "mock-grpc/pkg/client/users"
+	"mock-grpc/pkg/client/agent"
 	pb "mock-grpc/zomato-proto"
 
 	"google.golang.org/grpc"
@@ -44,8 +44,8 @@ func main() {
 	// menu.DeleteDish(C, Ctx, "Tikka")
 
 	// agent.CreateAgent(C, Ctx)
-	// agent.UpdateAgentStatus(C, Ctx, "Navdeep", false)
-	user.PlaceOrder(C, Ctx)
+	agent.UpdateAgentStatus(C, Ctx, "Navdeep", false)
+	// user.PlaceOrder(C, Ctx)
 	// agent.GetDeliveryOrders(C, Ctx, 1)
 
 }
