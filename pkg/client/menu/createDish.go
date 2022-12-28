@@ -3,11 +3,11 @@ package menu
 import (
 	"context"
 	"log"
+	"mock-grpc/utils"
 	pb "mock-grpc/zomato-proto"
 )
 
 func CreateDish(c pb.ZomatoDatabaseCrudClient, ctx context.Context) {
-	//create Dish from client
 	new_Dish, err := c.CreateDish(ctx, &pb.NewDish{
 		Name:         "lays",
 		Description:  "this is lays",
@@ -18,8 +18,6 @@ func CreateDish(c pb.ZomatoDatabaseCrudClient, ctx context.Context) {
 		IsVeg:        true,
 		Cuisine:      "american",
 		Category:     "delight"})
-	if err != nil {
-		log.Fatal(err.Error())
-	}
+	utils.CheckError(err)
 	log.Printf("Dish Name: %v \n Email: %v", new_Dish.GetName(), new_Dish.GetPrice())
 }

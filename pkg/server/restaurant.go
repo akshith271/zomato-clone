@@ -18,7 +18,7 @@ func (s *ZomatoServer) CreateRestaurant(ctx context.Context, in *pb.NewRestauran
 		Password: in.GetPassword(),
 		IsActive: in.GetIsActive(),
 	}
-	s.Db.CreateRestaurant(newRestaurant)
+	err := s.Db.CreateRestaurant(newRestaurant)
 	fmt.Println(newRestaurant)
 	return &pb.Restaurant{
 		Name:     in.GetName(),
@@ -26,7 +26,7 @@ func (s *ZomatoServer) CreateRestaurant(ctx context.Context, in *pb.NewRestauran
 		Timings:  in.GetTimings(),
 		Email:    in.GetEmail(),
 		Password: in.GetPassword(),
-		IsActive: in.GetIsActive()}, nil
+		IsActive: in.GetIsActive()}, err
 }
 
 func (s *ZomatoServer) GetRestaurantMenu(ctx context.Context, in *pb.RestaurantMenuRequest) (*pb.Menu, error) {
@@ -56,9 +56,9 @@ func (s *ZomatoServer) UpdateRestaurant(ctx context.Context, in *pb.Restaurant) 
 		Address: in.GetAddress(),
 		Email:   in.GetEmail(),
 	}
-	s.Db.UpdateRestaurant(restaurant)
+	err := s.Db.UpdateRestaurant(restaurant)
 	return &pb.Restaurant{
 		Name:    in.GetName(),
 		Address: in.GetAddress(),
-		Email:   in.GetEmail()}, nil
+		Email:   in.GetEmail()}, err
 }

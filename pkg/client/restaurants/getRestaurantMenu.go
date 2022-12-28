@@ -3,7 +3,7 @@ package restaurants
 import (
 	"context"
 	"fmt"
-	"log"
+	"mock-grpc/utils"
 	pb "mock-grpc/zomato-proto"
 )
 
@@ -11,9 +11,7 @@ func GetRestaurantMenu(c pb.ZomatoDatabaseCrudClient, ctx context.Context, resta
 	result, err := c.GetRestaurantMenu(ctx, &pb.RestaurantMenuRequest{
 		RestaurantID: restaurantId,
 	})
-	if err != nil {
-		log.Printf("error ochindi")
-	}
+	utils.CheckError(err)
 	fmt.Println(result)
 	return result, nil
 

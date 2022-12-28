@@ -147,8 +147,3 @@ message Order{
     int64 AgentID = 3;
     int64 RestaurantID = 4;
 }
-// message NewOrder{
-//     int64 Id = 1;
-//     int64 UserId = 1;
-//     int64 AgentId
-// }

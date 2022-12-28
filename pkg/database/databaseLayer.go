@@ -7,21 +7,21 @@ import (
 )
 
 type DataBaseLayer interface {
-	//User interface calls
+	//User
 	CreateUser(models.User) error
 	GetUsers() ([]models.User, error)
 	UpdateUser(models.User) error
 	GetUserOrders(models.User) ([]models.OrderItem, error)
 	CreateOrder(models.Order) error
-	//Agent interface calls
+	//Agent
 	CreateAgent(models.Agent) error
 	UpdateAgentStatus(models.Agent) error
 	GetAllAgents() ([]models.Agent, error)
-	//Restaurant interface calls
+	//Restaurant
 	CreateRestaurant(models.Restaurant) error
 	GetRestaurantMenu(models.Restaurant) ([]models.Dish, error)
 	UpdateRestaurant(models.Restaurant) error
-	//Dishes interface calls
+	//Dishes
 	CreateDish(models.Dish) error
 	UpdateDish(models.Dish) error
 	DeleteDish(string) error
@@ -31,21 +31,19 @@ type DBClient struct {
 	Db *gorm.DB
 }
 
+// User calls
 func (db DBClient) CreateUser(newUser models.User) error {
-	db.Db.Save(&newUser)
-	return nil
+	err := db.Db.Save(&newUser)
+	return err.Error
 }
-
 func (db DBClient) GetUsers() ([]models.User, error) {
 	result := []models.User{}
-	db.Db.Find(&result)
-	return result, nil
+	err := db.Db.Find(&result)
+	return result, err.Error
 }
-
 func (db DBClient) UpdateUser(user models.User) error {
-	db.Db.Model(&models.User{}).Where("name=?", user.Name).Update("email", user.Email)
-	// db.Db.Updates(&user)
-	return nil
+	err := db.Db.Model(&models.User{}).Where("name=?", user.Name).Update("email", user.Email)
+	return err.Error
 }
 
 func (db DBClient) GetUserOrders(user models.User) ([]models.OrderItem, error) {
@@ -55,13 +53,13 @@ func (db DBClient) GetUserOrders(user models.User) ([]models.OrderItem, error) {
 }
 
 func (db DBClient) CreateDish(newDish models.Dish) error {
-	db.Db.Save(&newDish)
-	return nil
+	err := db.Db.Save(&newDish)
+	return err.Error
 }
 
 func (db DBClient) UpdateDish(dish models.Dish) error {
-	db.Db.Model(&models.Dish{}).Where("name=?", dish.Name).Update("price", dish.Price)
-	return nil
+	err := db.Db.Model(&models.Dish{}).Where("name=?", dish.Name).Update("price", dish.Price)
+	return err.Error
 }
 func (db DBClient) DeleteDish(dishName string) error {
 	DB := db.Db.Where("name=?", dishName).Delete(&models.Dish{})
@@ -69,42 +67,36 @@ func (db DBClient) DeleteDish(dishName string) error {
 }
 
 func (db DBClient) CreateRestaurant(newRestaurant models.Restaurant) error {
-	db.Db.Save(&newRestaurant)
-	return nil
+	err := db.Db.Save(&newRestaurant)
+	return err.Error
 }
 func (db DBClient) UpdateRestaurant(restaurant models.Restaurant) error {
-	db.Db.Model(&models.Restaurant{}).Where("name=?", restaurant.Name).Update("address", restaurant.Address)
-	return nil
+	err := db.Db.Model(&models.Restaurant{}).Where("name=?", restaurant.Name).Update("address", restaurant.Address)
+	return err.Error
 }
 func (db DBClient) GetRestaurantMenu(restaurant models.Restaurant) ([]models.Dish, error) {
 	result := []models.Dish{}
-	db.Db.Model(&models.Dish{}).Where("restaurant_id=?", restaurant.ID).Find(&result)
-	return result, nil
+	err := db.Db.Model(&models.Dish{}).Where("restaurant_id=?", restaurant.ID).Find(&result)
+	return result, err.Error
 }
 
 func (db DBClient) CreateAgent(newAgent models.Agent) error {
-	db.Db.Save(&newAgent)
-	return nil
+	err := db.Db.Save(&newAgent)
+	return err.Error
 }
 
 func (db DBClient) UpdateAgentStatus(agent models.Agent) error {
-	db.Db.Model(&models.Agent{}).Where("name=?", agent.Name).Update("is_active", agent.IsActive)
-	return nil
+	err := db.Db.Model(&models.Agent{}).Where("name=?", agent.Name).Update("is_active", agent.IsActive)
+	return err.Error
 }
 
 func (db DBClient) GetAllAgents() ([]models.Agent, error) {
 	result := []models.Agent{}
-	db.Db.Find(&result)
-	return result, nil
+	err := db.Db.Find(&result)
+	return result, err.Error
 }
 
 func (db DBClient) CreateOrder(order models.Order) error {
-	result := db.Db.Save(&order)
-	return result.Error
+	err := db.Db.Save(&order)
+	return err.Error
 }
-
-// func (db DBClient) GetOrders() ([]models.Order, error) {
-// 	result := []models.Order{}
-// 	db.Db.Find(&result)
-// 	return result, nil
-// }

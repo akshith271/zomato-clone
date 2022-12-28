@@ -18,7 +18,7 @@ func (s *ZomatoServer) CreateAgent(ctx context.Context, in *pb.NewAgent) (*pb.Ag
 		IsActive:       in.GetIsActive(),
 		CurrentOrderId: int(in.GetCurrentOrderId()),
 	}
-	s.Db.CreateAgent(newAgent)
+	err := s.Db.CreateAgent(newAgent)
 	log.Printf("%v\n ", in.GetName())
 	return &pb.Agent{
 		Name:     in.GetName(),
@@ -26,7 +26,7 @@ func (s *ZomatoServer) CreateAgent(ctx context.Context, in *pb.NewAgent) (*pb.Ag
 		Address:  in.GetAddress(),
 		Email:    in.GetEmail(),
 		IsActive: in.GetIsActive(),
-	}, nil
+	}, err
 }
 
 func (s *ZomatoServer) UpdateAgentStatus(ctx context.Context, in *pb.AgentStatus) (*pb.AgentStatus, error) {
@@ -35,8 +35,8 @@ func (s *ZomatoServer) UpdateAgentStatus(ctx context.Context, in *pb.AgentStatus
 		Name:     in.GetName(),
 		IsActive: in.IsActive,
 	}
-	s.Db.UpdateAgentStatus(agentToBeUpdated)
+	err := s.Db.UpdateAgentStatus(agentToBeUpdated)
 	return &pb.AgentStatus{
 		Name:     in.GetName(),
-		IsActive: in.GetIsActive()}, nil
+		IsActive: in.GetIsActive()}, err
 }

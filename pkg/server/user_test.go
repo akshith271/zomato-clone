@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"mock-grpc/mocks"
 	model "mock-grpc/models"
 	"mock-grpc/utils"
@@ -13,16 +14,6 @@ import (
 	"github.com/golang/mock/gomock"
 )
 
-var mockOrderRequest = pb.OrderRequest{
-	UserID:       1,
-	RestaurantID: 1,
-}
-var mockOrder = pb.Order{
-	OrderID:      1,
-	AgentID:      6,
-	UserID:       5,
-	RestaurantID: 1,
-}
 var mockUser = model.User{
 	Address: "ullamco labore aliqua",
 	Email:   "esse",
@@ -30,11 +21,12 @@ var mockUser = model.User{
 	Phone:   "velit",
 }
 
-var mockPlacedAgent = model.Agent{
-	Address: "ullamco labore aliqua",
-	Email:   "esse",
-	Name:    "sunt ut enim incididunt",
-	Phone:   "velit",
+var mockPlacedAgent = &model.Agent{
+	Address:  "ullamco labore aliqua",
+	Email:    "esse",
+	Name:     "sunt ut enim incididunt",
+	Phone:    "velit",
+	IsActive: true,
 }
 
 var newUser = pb.NewUser{
@@ -84,20 +76,85 @@ func TestCreateUser(t *testing.T) {
 	defer controller.Finish()
 	mockDb := mocks.NewMockDataBaseLayer(controller)
 	testUser := ZomatoServer{Db: mockDb}
-	ctx := context.Background()
-	mockDb.EXPECT().CreateUser(mockUser).Return(nil)
-	got, err := testUser.CreateUser(ctx, &newUser)
-	utils.CheckError(err)
-	expected := &pb.User{
-		Address: "ullamco labore aliqua",
-		Email:   "esse",
-		Name:    "sunt ut enim incididunt",
-		Phone:   "velit",
+	tests := []struct {
+		name        string
+		input       *pb.NewUser
+		mockErr     error
+		expectedErr error
+		expectedOut *pb.User
+	}{
+		{
+			name: "valid input",
+			input: &pb.NewUser{
+				Id:      1,
+				Name:    "ramesh",
+				Phone:   "1234567890",
+				Address: "yusufguda",
+				Email:   "sai@example.com",
+			},
+			mockErr:     nil,
+			expectedErr: nil,
+			expectedOut: &pb.User{
+				Id:      1,
+				Name:    "ramesh",
+				Phone:   "1234567890",
+				Address: "yusufguda",
+				Email:   "sai@example.com",
+			},
+		},
+		{
+			name: "invalid input",
+			input: &pb.NewUser{
+				Id:      0,
+				Name:    "",
+				Phone:   "",
+				Address: "",
+				Email:   "",
+			},
+			mockErr:     nil,
+			expectedErr: fmt.Errorf("invalid input"),
+			expectedOut: nil,
+		},
+		{
+			name: "database error",
+			input: &pb.NewUser{
+				Id:      1,
+				Name:    "ramesh",
+				Phone:   "1234567890",
+				Address: "yusufguda",
+				Email:   "sai@example.com",
+			},
+			mockErr:     nil,
+			expectedErr: nil,
+			expectedOut: nil,
+		},
 	}
-	if !reflect.DeepEqual(got, expected) {
-		t.Errorf("The Function Returned is not expected one. got %v expected %v",
-			got, expected)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			mockDb.EXPECT().CreateUser(test.input).Return(test.mockErr)
+			out, err := testUser.CreateUser(context.Background(), test.input)
+			if err != test.expectedErr {
+				t.Errorf("unexpected error: got %v, want %v", err.Error(), test.expectedErr)
+			}
+			if !reflect.DeepEqual(out, test.expectedOut) {
+				t.Errorf("unexpected output: got %v, want %v", out, test.expectedOut)
+			} else {
+				t.Errorf("success")
+			}
+		})
 	}
+	// got, err := testUser.CreateUser(ctx, &newUser)
+	// utils.CheckError(err)
+	// expected := &pb.User{
+	// 	Address: "ullamco labore aliqua",
+	// 	Email:   "esse",
+	// 	Name:    "sunt ut enim incididunt",
+	// 	Phone:   "velit",
+	// }
+	// if !reflect.DeepEqual(got, expected) {
+	// 	t.Errorf("The Function Returned is not expected one. got %v expected %v",
+	// 		got, expected)
+	// }
 }
 
 func TestGetUsers(t *testing.T) {
@@ -159,5 +216,26 @@ func TestGetUserOrders(t *testing.T) {
 	if !reflect.DeepEqual(got, expected) {
 		t.Errorf("The Function Returned is not expected one. got %v expected %v",
 			got, expected)
+	}
+}
+
+func TestPlaceOrder(t *testing.T) {
+	controller := gomock.NewController(t)
+	defer controller.Finish()
+	mockDB := mocks.NewMockDataBaseLayer(controller)
+	mockDB.EXPECT().GetAllAgents().Return([]model.Agent{
+		{Name: "GST", IsActive: true, CurrentOrderId: 0},
+	}, nil)
+	mockDB.EXPECT().CreateOrder(gomock.Any()).Return(nil)
+	server := &ZomatoServer{
+		Db: mockDB,
+	}
+	order, err := server.PlaceOrder(context.Background(), &pb.OrderRequest{
+		UserID:       1,
+		RestaurantID: 3,
+	})
+	utils.CheckError(err)
+	if order.UserID != 1 || order.RestaurantID != 3 {
+		t.Errorf("unexpected output: %v", order)
 	}
 }

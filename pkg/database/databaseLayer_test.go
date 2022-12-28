@@ -13,8 +13,7 @@ import (
 
 func SetupDBClient() (*gorm.DB, sqlmock.Sqlmock, error) {
 	var (
-		Db  *sql.DB
-		err error
+		Db *sql.DB
 	)
 	Db, mock, _ := sqlmock.New()
 	db, err := gorm.Open("postgres", Db)

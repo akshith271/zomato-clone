@@ -3,15 +3,16 @@ module mock-grpc
 go 1.19
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/golang/mock v1.6.0
 	github.com/golang/protobuf v1.5.2
 	github.com/jinzhu/gorm v1.9.16
+	github.com/joho/godotenv v1.4.0
 	github.com/lib/pq v1.1.1
 	google.golang.org/grpc v1.51.0
 )
 
 require (
-	github.com/DATA-DOG/go-sqlmock v1.5.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/net v0.0.0-20220722155237-a158d28d115b // indirect

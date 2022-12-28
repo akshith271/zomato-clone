@@ -2,25 +2,44 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"math/rand"
 	Mail "mock-grpc/mail"
 	model "mock-grpc/models"
 	"mock-grpc/utils"
 	pb "mock-grpc/zomato-proto"
+	"net/mail"
 )
+
+func isValidEmail(email string) bool {
+	_, err := mail.ParseAddress(email)
+	if err != nil {
+		return false
+	}
+	return true
+}
 
 func (s *ZomatoServer) CreateUser(ctx context.Context, in *pb.NewUser) (*pb.User, error) {
 	log.Printf("createUser method called from server side")
+	// validate input
+	if in.GetName() == "" || in.GetPhone() == "" || in.GetAddress() == "" || in.GetEmail() == "" {
+		return nil, fmt.Errorf("invalid input")
+	}
+	if !isValidEmail(in.GetEmail()) {
+		return nil, fmt.Errorf("invalid email")
+	}
+
 	newUser := model.User{
 		Name:    in.GetName(),
 		Phone:   in.GetPhone(),
 		Address: in.GetAddress(),
 		Email:   in.GetEmail(),
 	}
-	s.Db.CreateUser(newUser)
-	Mail.Mail(newUser.Email)
+	err := s.Db.CreateUser(newUser)
+	utils.CheckError(err)
 	log.Printf("%v\n ", in.GetEmail())
+	Mail.Mail(in.GetEmail())
 	return &pb.User{
 		Id:      in.GetId(),
 		Name:    in.GetName(),
@@ -78,10 +97,9 @@ func (s *ZomatoServer) PlaceOrder(ctx context.Context, in *pb.OrderRequest) (*pb
 	//extract his id (agent_id)
 	//get the id of the user who is calling this method (user_id)
 	//create a new order with the agent_id and user_id and some restaurant_id
-	//go to that agent record and set the current order as this order
-	//after the workflow, acknowledge with a mail
 	totalAgentData := []*pb.Agent{}
 	totalAgents, err := s.Db.GetAllAgents()
+	// fmt.Print(len(totalAgents))
 	for _, agent := range totalAgents {
 		if agent.IsActive == true {
 			totalAgentData = append(totalAgentData, &pb.Agent{

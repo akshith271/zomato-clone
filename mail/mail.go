@@ -3,14 +3,21 @@ package Mail
 import (
 	"fmt"
 	"io"
-	"mock-grpc/environment"
 	"net/http"
+	"os"
 	"strings"
+
+	"github.com/joho/godotenv"
 )
 
-// func main() {
 func Mail(email string) {
-	url := "https://rapidprod-sendgrid-v1.p.rapidapi.com/mail/send"
+	envErr := godotenv.Load(".env")
+	if envErr != nil {
+		fmt.Printf("Could not load .env file")
+		os.Exit(1)
+	}
+	MailURL := os.Getenv("MailURL")
+	url := MailURL
 	code := fmt.Sprintf(`{
 	    "personalizations": [
 	        {
@@ -32,14 +39,15 @@ func Mail(email string) {
 			}
 	    ]
 	}`, email)
-	// fmt.Println(code)
 
 	payload := strings.NewReader(code)
 	req, _ := http.NewRequest("POST", url, payload)
 
+	XRapidAPIKey := os.Getenv("XRapidAPIKey")
+	XRapidAPIHost := os.Getenv("XRapidAPIHost")
 	req.Header.Add("content-type", "application/json")
-	req.Header.Add("X-RapidAPI-Key", environment.XRapidAPIKey)
-	req.Header.Add("X-RapidAPI-Host", environment.XRapidAPIHost)
+	req.Header.Add("X-RapidAPI-Key", XRapidAPIKey)
+	req.Header.Add("X-RapidAPI-Host", XRapidAPIHost)
 
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {

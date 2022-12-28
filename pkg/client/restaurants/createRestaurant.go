@@ -3,11 +3,11 @@ package restaurants
 import (
 	"context"
 	"log"
+	"mock-grpc/utils"
 	pb "mock-grpc/zomato-proto"
 )
 
 func CreateRestaurant(c pb.ZomatoDatabaseCrudClient, ctx context.Context) {
-	//create Restaurant from client
 	new_Restaurant, err := c.CreateRestaurant(ctx, &pb.NewRestaurant{
 		Name:     "mehfil",
 		Address:  "jubilee hills",
@@ -15,8 +15,6 @@ func CreateRestaurant(c pb.ZomatoDatabaseCrudClient, ctx context.Context) {
 		Email:    "mehfil@gmail.com",
 		Password: "7654",
 		IsActive: true})
-	if err != nil {
-		log.Fatal(err.Error())
-	}
+	utils.CheckError(err)
 	log.Printf("Restaurant Name: %v \n Email: %v", new_Restaurant.GetName(), new_Restaurant.GetEmail())
 }

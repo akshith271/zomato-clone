@@ -21,7 +21,7 @@ func (s *ZomatoServer) CreateDish(ctx context.Context, in *pb.NewDish) (*pb.Dish
 		Cuisine:      in.GetCuisine(),
 		Category:     in.GetCategory(),
 	}
-	s.Db.CreateDish(newDish)
+	err := s.Db.CreateDish(newDish)
 	fmt.Println(newDish)
 	return &pb.Dish{
 		Name:         in.GetName(),
@@ -32,7 +32,7 @@ func (s *ZomatoServer) CreateDish(ctx context.Context, in *pb.NewDish) (*pb.Dish
 		IsAvailable:  in.GetIsAvailable(),
 		IsVeg:        in.GetIsVeg(),
 		Cuisine:      in.GetCuisine(),
-		Category:     in.GetCategory()}, nil
+		Category:     in.GetCategory()}, err
 }
 
 func (s *ZomatoServer) UpdateDish(ctx context.Context, in *pb.Dish) (*pb.Dish, error) {
@@ -52,6 +52,6 @@ func (s *ZomatoServer) UpdateDish(ctx context.Context, in *pb.Dish) (*pb.Dish, e
 
 func (s *ZomatoServer) DeleteDish(ctx context.Context, in *pb.Dish) (*pb.VoidDishResponse, error) {
 	log.Printf("Delete Dish method called from server side")
-	s.Db.DeleteDish("Tikka")
-	return &pb.VoidDishResponse{}, nil
+	err := s.Db.DeleteDish("Tikka")
+	return &pb.VoidDishResponse{}, err
 }
