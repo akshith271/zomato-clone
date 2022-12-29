@@ -16,16 +16,16 @@ import (
 	"google.golang.org/grpc"
 )
 
+func myInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+
+	resp, err := handler(ctx, req)
+	return resp, err
+}
+
 // declaring the port number
 const (
 	port = ":50051"
 )
-
-func myInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-	// call the handler function.
-	resp, err := handler(ctx, req)
-	return resp, err
-}
 
 func main() {
 	//creating gorm instance

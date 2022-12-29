@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"math/rand"
 	Mail "mock-grpc/mail"
@@ -23,12 +22,12 @@ func isValidEmail(email string) bool {
 func (s *ZomatoServer) CreateUser(ctx context.Context, in *pb.NewUser) (*pb.User, error) {
 	log.Printf("createUser method called from server side")
 	// validate input
-	if in.GetName() == "" || in.GetPhone() == "" || in.GetAddress() == "" || in.GetEmail() == "" {
-		return nil, fmt.Errorf("invalid input")
-	}
-	if !isValidEmail(in.GetEmail()) {
-		return nil, fmt.Errorf("invalid email")
-	}
+	// if in.GetName() == "" || in.GetPhone() == "" || in.GetAddress() == "" || in.GetEmail() == "" {
+	// 	return nil, fmt.Errorf("invalid input")
+	// }
+	// if !isValidEmail(in.GetEmail()) {
+	// 	return nil, fmt.Errorf("invalid email")
+	// }
 
 	newUser := model.User{
 		Name:    in.GetName(),

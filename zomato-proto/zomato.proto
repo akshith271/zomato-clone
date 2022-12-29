@@ -5,6 +5,8 @@ option go_package = "mock-grpc/zomato-proto/proto";
 package zomatoDB;
 
 service ZomatoDatabaseCrud {
+    //token rpc
+    rpc CreateToken(User) returns (Token){}
     //user rpc
     rpc CreateUser(NewUser) returns (User) {} 
     rpc UpdateUser(User) returns (User){}
@@ -26,7 +28,9 @@ service ZomatoDatabaseCrud {
     rpc CreateAgent(NewAgent) returns (Agent){}
     rpc UpdateAgentStatus(AgentStatus) returns (AgentStatus){}
 }
-
+message Token{
+    string token = 1;
+}
 message User{
     int64 id=1;
     string name=2 ;

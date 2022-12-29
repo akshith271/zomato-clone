@@ -21,20 +21,20 @@ var mockUser = model.User{
 	Phone:   "velit",
 }
 
-var mockPlacedAgent = &model.Agent{
-	Address:  "ullamco labore aliqua",
-	Email:    "esse",
-	Name:     "sunt ut enim incididunt",
-	Phone:    "velit",
-	IsActive: true,
-}
+// var mockPlacedAgent = &model.Agent{
+// 	Address:  "ullamco labore aliqua",
+// 	Email:    "esse",
+// 	Name:     "sunt ut enim incididunt",
+// 	Phone:    "velit",
+// 	IsActive: true,
+// }
 
-var newUser = pb.NewUser{
-	Address: "ullamco labore aliqua",
-	Email:   "esse",
-	Name:    "sunt ut enim incididunt",
-	Phone:   "velit",
-}
+// var newUser = pb.NewUser{
+// 	Address: "ullamco labore aliqua",
+// 	Email:   "esse",
+// 	Name:    "sunt ut enim incididunt",
+// 	Phone:   "velit",
+// }
 
 var userToBeUpdated = model.User{
 	Address: "ullamco labore aliqua",

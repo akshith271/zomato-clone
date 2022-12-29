@@ -22,6 +22,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ZomatoDatabaseCrudClient interface {
+	// token rpc
+	CreateToken(ctx context.Context, in *User, opts ...grpc.CallOption) (*Token, error)
 	// user rpc
 	CreateUser(ctx context.Context, in *NewUser, opts ...grpc.CallOption) (*User, error)
 	UpdateUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
@@ -47,6 +49,15 @@ type zomatoDatabaseCrudClient struct {
 
 func NewZomatoDatabaseCrudClient(cc grpc.ClientConnInterface) ZomatoDatabaseCrudClient {
 	return &zomatoDatabaseCrudClient{cc}
+}
+
+func (c *zomatoDatabaseCrudClient) CreateToken(ctx context.Context, in *User, opts ...grpc.CallOption) (*Token, error) {
+	out := new(Token)
+	err := c.cc.Invoke(ctx, "/zomatoDB.ZomatoDatabaseCrud/CreateToken", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *zomatoDatabaseCrudClient) CreateUser(ctx context.Context, in *NewUser, opts ...grpc.CallOption) (*User, error) {
@@ -170,6 +181,8 @@ func (c *zomatoDatabaseCrudClient) UpdateAgentStatus(ctx context.Context, in *Ag
 // All implementations must embed UnimplementedZomatoDatabaseCrudServer
 // for forward compatibility
 type ZomatoDatabaseCrudServer interface {
+	// token rpc
+	CreateToken(context.Context, *User) (*Token, error)
 	// user rpc
 	CreateUser(context.Context, *NewUser) (*User, error)
 	UpdateUser(context.Context, *User) (*User, error)
@@ -194,6 +207,9 @@ type ZomatoDatabaseCrudServer interface {
 type UnimplementedZomatoDatabaseCrudServer struct {
 }
 
+func (UnimplementedZomatoDatabaseCrudServer) CreateToken(context.Context, *User) (*Token, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateToken not implemented")
+}
 func (UnimplementedZomatoDatabaseCrudServer) CreateUser(context.Context, *NewUser) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
 }
@@ -244,6 +260,24 @@ type UnsafeZomatoDatabaseCrudServer interface {
 
 func RegisterZomatoDatabaseCrudServer(s grpc.ServiceRegistrar, srv ZomatoDatabaseCrudServer) {
 	s.RegisterService(&ZomatoDatabaseCrud_ServiceDesc, srv)
+}
+
+func _ZomatoDatabaseCrud_CreateToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(User)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ZomatoDatabaseCrudServer).CreateToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/zomatoDB.ZomatoDatabaseCrud/CreateToken",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ZomatoDatabaseCrudServer).CreateToken(ctx, req.(*User))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _ZomatoDatabaseCrud_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -487,6 +521,10 @@ var ZomatoDatabaseCrud_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "zomatoDB.ZomatoDatabaseCrud",
 	HandlerType: (*ZomatoDatabaseCrudServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateToken",
+			Handler:    _ZomatoDatabaseCrud_CreateToken_Handler,
+		},
 		{
 			MethodName: "CreateUser",
 			Handler:    _ZomatoDatabaseCrud_CreateUser_Handler,

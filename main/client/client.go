@@ -2,10 +2,11 @@ package main
 
 import (
 	"context"
-	"log"
+	"fmt"
 	"time"
 
 	user "mock-grpc/pkg/client/users"
+	"mock-grpc/utils"
 	pb "mock-grpc/zomato-proto"
 
 	"google.golang.org/grpc"
@@ -20,9 +21,7 @@ func main() {
 
 	connection, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock())
 
-	if err != nil {
-		log.Fatal("Connection Failed", err.Error())
-	}
+	utils.CheckError(err)
 	defer connection.Close()
 
 	C := pb.NewZomatoDatabaseCrudClient(connection)
@@ -30,7 +29,12 @@ func main() {
 	Ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	// user.CreateUser(C, Ctx)
+	newUser, err := user.CreateUser(C, Ctx)
+
+	token, err := C.CreateToken(Ctx, newUser)
+	fmt.Println(token)
+	// token, err := server.CreateToken(C, Ctx, newUser)
+	// fmt.Println(token)
 	// user.UpdateUser(C, Ctx, "Akshith", "bharadwaj@gmail.com")
 	// user.GetUserOrders(C, Ctx)
 	// user.GetUsers(C, Ctx)
@@ -45,7 +49,7 @@ func main() {
 
 	// agent.CreateAgent(C, Ctx)
 	// agent.UpdateAgentStatus(C, Ctx, "Navdeep", false)
-	user.PlaceOrder(C, Ctx)
+	// user.PlaceOrder(C, Ctx)
 	// agent.GetDeliveryOrders(C, Ctx, 1)
 
 }
