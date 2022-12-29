@@ -92,7 +92,7 @@ func (db DBClient) UpdateAgentStatus(agent models.Agent) error {
 
 func (db DBClient) GetAllAgents() ([]models.Agent, error) {
 	result := []models.Agent{}
-	err := db.Db.Find(&result)
+	err := db.Db.Model(&models.Agent{}).Where("is_active=?", true).Find(&result)
 	return result, err.Error
 }
 

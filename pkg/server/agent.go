@@ -21,22 +21,23 @@ func (s *ZomatoServer) CreateAgent(ctx context.Context, in *pb.NewAgent) (*pb.Ag
 	err := s.Db.CreateAgent(newAgent)
 	log.Printf("%v\n ", in.GetName())
 	return &pb.Agent{
-		Name:     in.GetName(),
-		Phone:    in.GetPhone(),
-		Address:  in.GetAddress(),
-		Email:    in.GetEmail(),
-		IsActive: in.GetIsActive(),
+		Id:       int64(newAgent.ID),
+		Name:     newAgent.Name,
+		Phone:    newAgent.Phone,
+		Address:  newAgent.Address,
+		Email:    newAgent.Email,
+		IsActive: newAgent.IsActive,
 	}, err
 }
 
 func (s *ZomatoServer) UpdateAgentStatus(ctx context.Context, in *pb.AgentStatus) (*pb.AgentStatus, error) {
 	log.Printf("updateAgent method called from server side")
-	agentToBeUpdated := model.Agent{
+	updatedAgent := model.Agent{
 		Name:     in.GetName(),
 		IsActive: in.IsActive,
 	}
-	err := s.Db.UpdateAgentStatus(agentToBeUpdated)
+	err := s.Db.UpdateAgentStatus(updatedAgent)
 	return &pb.AgentStatus{
-		Name:     in.GetName(),
-		IsActive: in.GetIsActive()}, err
+		Name:     updatedAgent.Name,
+		IsActive: updatedAgent.IsActive}, err
 }

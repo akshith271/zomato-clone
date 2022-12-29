@@ -29,26 +29,24 @@ func (interceptor *AuthInterceptor) UnaryAuthenticator() grpc.UnaryServerInterce
 		handler grpc.UnaryHandler,
 	) (interface{}, error) {
 		log.Println("--> unary interceptor: ", info.FullMethod)
-		if info.FullMethod == "/pb.ZomatoDatabaseCrud/CreateToken" {
-			return handler(ctx, req)
+		if info.FullMethod != "/pb.ZomatoDatabaseCrud/CreateToken" {
+			err := interceptor.authorize(ctx, info.FullMethod)
+			if err != nil {
+				return nil, err
+			}
 		}
-		err := interceptor.authorize(ctx, info.FullMethod)
-		if err != nil {
-			return nil, err
-		}
-
 		return handler(ctx, req)
 	}
 }
 
 func (interceptor *AuthInterceptor) authorize(ctx context.Context, method string) error {
 
-	md, ok := metadata.FromIncomingContext(ctx)
+	metadata, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return status.Errorf(codes.Unauthenticated, "metadata is not provided")
 	}
 
-	values := md["authorization"]
+	values := metadata["authorization"]
 	if len(values) == 0 {
 		return status.Errorf(codes.Unauthenticated, "authorization token is not provided")
 	}

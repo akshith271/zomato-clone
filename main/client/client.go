@@ -30,8 +30,9 @@ func main() {
 	defer cancel()
 
 	newUser, err := user.CreateUser(C, Ctx)
-
-	token, err := C.CreateToken(Ctx, newUser)
+	utils.CheckError(err)
+	token, tokenErr := C.CreateToken(Ctx, newUser)
+	utils.CheckError(tokenErr)
 	fmt.Println(token)
 	// token, err := server.CreateToken(C, Ctx, newUser)
 	// fmt.Println(token)

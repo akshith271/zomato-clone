@@ -18,6 +18,7 @@ type Order struct {
 	UserId       uint
 	AgentId      uint
 	RestaurantId uint
+	Total        int
 	OrderItems   []OrderItem
 }
 
@@ -40,6 +41,7 @@ type Dish struct {
 	Cuisine      string
 	Category     string
 }
+
 type Restaurant struct {
 	gorm.Model
 	Name     string
