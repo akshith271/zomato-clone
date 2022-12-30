@@ -108,16 +108,10 @@ func (s *ZomatoServer) PlaceOrder(ctx context.Context, in *pb.OrderRequest) (*pb
 	//extract his id (agent_id)
 	//get the id of the user who is calling this method (user_id)
 	//create a new order with the agent_id and user_id and some restaurant_id
-	totalActiveAgentData := []*pb.Agent{}
-	totalAgents, err := s.Db.GetAllAgents()
-	for _, agent := range totalAgents {
-		totalActiveAgentData = append(totalActiveAgentData, &pb.Agent{
-			Id: int64(agent.ID),
-		})
-	}
+	totalAgents, err := s.Db.GetAllActiveAgents()
 	utils.CheckError(err)
-	index := rand.Intn(len(totalActiveAgentData))
-	randomAgentID := uint(totalActiveAgentData[index].Id)
+	index := rand.Intn(len(totalAgents))
+	randomAgentID := uint(totalAgents[index].ID)
 	userID := uint(in.GetUserID())
 	restaurantID := uint(in.GetRestaurantID())
 	newOrderRequest := model.Order{

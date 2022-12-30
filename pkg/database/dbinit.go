@@ -2,33 +2,43 @@ package database
 
 import (
 	"fmt"
-	"mock-grpc/models"
 	"mock-grpc/utils"
+	"os"
 
 	"github.com/jinzhu/gorm"
+	"github.com/joho/godotenv"
 )
 
 func DBinit() *gorm.DB {
-	db, err := gorm.Open("postgres", "user=postgres dbname=zomato password=root  sslmode=disable")
+	envErr := godotenv.Load(".env")
+	if envErr != nil {
+		fmt.Printf("Could not load .env file")
+		os.Exit(1)
+	}
+	user := os.Getenv("DATABASE_USER")
+	password := os.Getenv("DATABASE_PASSWORD")
+	dbname := os.Getenv("DATABASE_DBNAME")
+	db, err := gorm.Open("postgres", "user="+user+" password="+password+" dbname="+dbname+" sslmode=disable")
 	utils.CheckError(err)
-	defer db.Close()
-	db.AutoMigrate(&models.User{},
-		&models.Agent{},
-		&models.Dish{},
-		&models.Restaurant{},
-		&models.Order{},
-		&models.OrderItem{},
-	)
+	// defer db.Close()
+	// db.AutoMigrate(
+	// 	&models.User{},
+	// 	&models.Agent{},
+	// 	&models.Dish{},
+	// 	&models.Restaurant{},
+	// 	&models.Order{},
+	// 	&models.OrderItem{},
+	// )
 	//order
-	db.Model(&models.Order{}).AddForeignKey("user_id", "users(id)", "CASCADE", "CASCADE")
-	db.Model(&models.Order{}).AddForeignKey("agent_id", "agents(id)", "CASCADE", "CASCADE")
-	db.Model(&models.Order{}).AddForeignKey("restaurant_id", "restaurants(id)", "CASCADE", "CASCADE")
+	// db.Model(&models.Order{}).AddForeignKey("user_id", "users(id)", "CASCADE", "CASCADE")
+	// db.Model(&models.Order{}).AddForeignKey("agent_id", "agents(id)", "CASCADE", "CASCADE")
+	// db.Model(&models.Order{}).AddForeignKey("restaurant_id", "restaurants(id)", "CASCADE", "CASCADE")
 	//dish
-	db.Model(&models.Dish{}).AddForeignKey("restaurant_id", "restaurants(id)", "CASCADE", "CASCADE")
+	// db.Model(&models.Dish{}).AddForeignKey("restaurant_id", "restaurants(id)", "CASCADE", "CASCADE")
 	//orderItems
-	db.Model(&models.OrderItem{}).AddForeignKey("user_id", "users(id)", "CASCADE", "CASCADE")
-	db.Model(&models.OrderItem{}).AddForeignKey("dish_id", "dishes(id)", "CASCADE", "CASCADE")
-	db.Model(&models.OrderItem{}).AddForeignKey("order_id", "orders(id)", "CASCADE", "CASCADE")
+	// db.Model(&models.OrderItem{}).AddForeignKey("user_id", "users(id)", "CASCADE", "CASCADE")
+	// db.Model(&models.OrderItem{}).AddForeignKey("dish_id", "dishes(id)", "CASCADE", "CASCADE")
+	// db.Model(&models.OrderItem{}).AddForeignKey("order_id", "orders(id)", "CASCADE", "CASCADE")
 
 	// db.Save(&models.Restaurant{
 	// 	Name:     "Bawarchi",
