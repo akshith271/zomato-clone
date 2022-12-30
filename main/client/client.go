@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	user "mock-grpc/pkg/client/users"
@@ -28,13 +29,13 @@ func main() {
 	Ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	// newUser, err := user.CreateUser(C, Ctx)
-	// utils.CheckError(err)
-	// token, tokenErr := C.CreateToken(Ctx, newUser)
-	// utils.CheckError(tokenErr)
-	// fmt.Println(token)
+	newUser, err := user.CreateUser(C, Ctx)
+	utils.CheckError(err)
+	token, tokenErr := C.CreateToken(Ctx, newUser)
+	utils.CheckError(tokenErr)
+	fmt.Println(token)
 	// token, err := server.CreateToken(C, Ctx, newUser)
-	// fmt.Println(token)
+	fmt.Println(token)
 	// user.UpdateUser(C, Ctx, "Akshith", "bharadwaj@gmail.com")
 	user.GetUserOrders(C, Ctx)
 	// user.GetUsers(C, Ctx)

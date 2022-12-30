@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
-	Mail "mock-grpc/mail"
 	model "mock-grpc/models"
 	"mock-grpc/utils"
 	pb "mock-grpc/zomato-proto"
@@ -40,16 +39,16 @@ func (s *ZomatoServer) CreateUser(ctx context.Context, in *pb.NewUser) (*pb.User
 	utils.CheckError(err)
 	log.Printf("%v\n ", in.GetEmail())
 	// handle Mail.Mail asynchronously using go routines
-	email := in.GetEmail()
-	resultChannel := make(chan error)
-	go func() {
-		resultChannel <- Mail.Mail(email)
-	}()
-	mailResult := <-resultChannel
+	// email := in.GetEmail()
+	// resultChannel := make(chan error)
+	// go func() {
+	// 	resultChannel <- Mail.Mail(email)
+	// }()
+	// mailResult := <-resultChannel
 
-	if mailResult != nil {
-		return nil, fmt.Errorf("failed to send email: %v", mailResult)
-	}
+	// if mailResult != nil {
+	// 	return nil, fmt.Errorf("failed to send email: %v", mailResult)
+	// }
 	// Mail.Mail(in.GetEmail())
 	return &pb.User{
 		Id:      int64(newUser.ID),

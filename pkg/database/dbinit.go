@@ -18,6 +18,7 @@ func DBinit() *gorm.DB {
 	user := os.Getenv("DATABASE_USER")
 	password := os.Getenv("DATABASE_PASSWORD")
 	dbname := os.Getenv("DATABASE_DBNAME")
+	// url := "postgres://postgres:ObFI2mtCUMtdYfH@withered-voice-8657-db.internal:5432"
 	db, err := gorm.Open("postgres", "user="+user+" password="+password+" dbname="+dbname+" sslmode=disable")
 	utils.CheckError(err)
 	// defer db.Close()

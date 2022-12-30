@@ -21,7 +21,7 @@ func gRPCInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServe
 
 // declaring the port number
 const (
-	port = ":50051"
+	port = ":54321"
 )
 
 func main() {
