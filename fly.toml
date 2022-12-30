@@ -10,7 +10,7 @@ processes = []
   buildpacks = ["gcr.io/paketo-buildpacks/go"]
 
 [env]
-  PORT = "8080"
+  PORT = "54321"
 
 [experimental]
   allowed_public_ports = []

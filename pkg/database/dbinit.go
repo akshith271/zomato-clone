@@ -13,13 +13,15 @@ func DBinit() *gorm.DB {
 	envErr := godotenv.Load(".env")
 	if envErr != nil {
 		fmt.Printf("Could not load .env file")
-		os.Exit(1)
+		//os.Exit(1)
 	}
-	user := os.Getenv("DATABASE_USER")
-	password := os.Getenv("DATABASE_PASSWORD")
-	dbname := os.Getenv("DATABASE_DBNAME")
-	// url := "postgres://postgres:ObFI2mtCUMtdYfH@withered-voice-8657-db.internal:5432"
-	db, err := gorm.Open("postgres", "user="+user+" password="+password+" dbname="+dbname+" sslmode=disable")
+
+	//user := os.Getenv("DATABASE_USER")
+	//password := os.Getenv("DATABASE_PASSWORD")
+	//dbname := os.Getenv("DATABASE_DBNAME")
+	conn := os.Getenv("DATABASE_URL")
+
+	db, err := gorm.Open("postgres", conn)
 	utils.CheckError(err)
 	// defer db.Close()
 	// db.AutoMigrate(

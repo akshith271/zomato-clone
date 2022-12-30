@@ -30,6 +30,7 @@ func main() {
 	listener, err := net.Listen("tcp", port)
 	utils.CheckError(err)
 	defer connection.Close()
+  log.Printf("Using port no %v", listener.Addr())
 	//creating a new server
 	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(gRPCInterceptor))
 	zomatoServer := &server.ZomatoServer{
