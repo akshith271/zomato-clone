@@ -1,6 +1,6 @@
 # fly.toml file generated for zomato on 2022-12-30T17:25:55+05:30
 
-app = "zomato"
+app = "zomato-akshith"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
@@ -10,7 +10,7 @@ processes = []
   buildpacks = ["gcr.io/paketo-buildpacks/go"]
 
 [env]
-  PORT = "8080"
+  PORT = "54321"
 
 [experimental]
   allowed_public_ports = []
@@ -22,16 +22,13 @@ processes = []
   processes = ["app"]
   protocol = "tcp"
   script_checks = []
-  [services.concurrency]
-    hard_limit = 25
-    soft_limit = 20
-    type = "connections"
 
   [[services.ports]]
     handlers = ["tls"]
     port = 443
-    [services.ports.tls_options]
-      alpn = ["h2"]
+
+  [services.ports.tls_options]
+    alpn = ["h2"]
 
   [[services.tcp_checks]]
     grace_period = "1s"
