@@ -223,7 +223,7 @@ func TestPlaceOrder(t *testing.T) {
 	controller := gomock.NewController(t)
 	defer controller.Finish()
 	mockDB := mocks.NewMockDataBaseLayer(controller)
-	mockDB.EXPECT().GetAllAgents().Return([]model.Agent{
+	mockDB.EXPECT().GetAllActiveAgents().Return([]model.Agent{
 		{Name: "GST", IsActive: true, CurrentOrderId: 0},
 	}, nil)
 	mockDB.EXPECT().CreateOrder(gomock.Any()).Return(nil)

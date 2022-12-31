@@ -16,7 +16,7 @@ type DataBaseLayer interface {
 	//Agent
 	CreateAgent(models.Agent) error
 	UpdateAgentStatus(models.Agent) error
-	GetAllAgents() ([]models.Agent, error)
+	GetAllActiveAgents() ([]models.Agent, error)
 	//Restaurant
 	CreateRestaurant(models.Restaurant) error
 	GetRestaurantMenu(models.Restaurant) ([]models.Dish, error)
@@ -48,7 +48,13 @@ func (db DBClient) UpdateUser(user models.User) error {
 
 func (db DBClient) GetUserOrders(user models.User) ([]models.OrderItem, error) {
 	result := []models.OrderItem{}
-	err := db.Db.Model([]models.OrderItem{}).Where("user_id=?", user.ID).Find(&result)
+	err := db.Db.Preload("Orders.OrderItems").First(&user, "id = ?", user.ID)
+	for _, order := range user.Orders {
+		for _, orderItem := range order.OrderItems {
+			result = append(result, orderItem)
+		}
+	}
+	// err := db.Db.Model([]models.OrderItem{}).Where("user_id=?", user.ID).Find(&result)
 	return result, err.Error
 }
 
@@ -90,9 +96,9 @@ func (db DBClient) UpdateAgentStatus(agent models.Agent) error {
 	return err.Error
 }
 
-func (db DBClient) GetAllAgents() ([]models.Agent, error) {
+func (db DBClient) GetAllActiveAgents() ([]models.Agent, error) {
 	result := []models.Agent{}
-	err := db.Db.Find(&result)
+	err := db.Db.Model(&models.Agent{}).Where("is_active=?", true).Find(&result)
 	return result, err.Error
 }
 

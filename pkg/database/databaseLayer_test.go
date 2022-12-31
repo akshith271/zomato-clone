@@ -2,7 +2,6 @@ package database
 
 import (
 	"database/sql"
-	"fmt"
 	model "mock-grpc/models"
 	"mock-grpc/utils"
 	"testing"
@@ -25,6 +24,11 @@ func TestCreateUser(t *testing.T) {
 		t.Fatalf("failed to create mock db client: %v", err)
 	}
 	defer db.Close()
+	defer func() {
+		if err := mock.ExpectationsWereMet(); err != nil {
+			t.Errorf("unmet mock expectations: %v", err)
+		}
+	}()
 	mockClient := DBClient{
 		Db: db,
 	}
@@ -36,6 +40,6 @@ func TestCreateUser(t *testing.T) {
 	createUserError := mockClient.CreateUser(model.User{})
 	utils.CheckError(createUserError)
 	if err != nil {
-		fmt.Println("failed to create user")
+		t.Errorf("failed to create user")
 	}
 }

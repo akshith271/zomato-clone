@@ -3,6 +3,7 @@ package Mail
 import (
 	"fmt"
 	"io"
+	"mock-grpc/utils"
 	"net/http"
 	"os"
 	"strings"
@@ -10,7 +11,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func Mail(email string) {
+func Mail(email string) error {
 	envErr := godotenv.Load(".env")
 	if envErr != nil {
 		fmt.Printf("Could not load .env file")
@@ -50,12 +51,11 @@ func Mail(email string) {
 	req.Header.Add("X-RapidAPI-Host", XRapidAPIHost)
 
 	res, err := http.DefaultClient.Do(req)
-	if err != nil {
-		fmt.Printf(err.Error())
-	}
+	utils.CheckError(err)
 	defer res.Body.Close()
 	body, _ := io.ReadAll(res.Body)
 
 	fmt.Println(res)
 	fmt.Println(string(body))
+	return nil
 }

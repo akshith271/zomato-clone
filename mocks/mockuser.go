@@ -118,19 +118,19 @@ func (mr *MockDataBaseLayerMockRecorder) DeleteDish(arg0 interface{}) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteDish", reflect.TypeOf((*MockDataBaseLayer)(nil).DeleteDish), arg0)
 }
 
-// GetAllAgents mocks base method.
-func (m *MockDataBaseLayer) GetAllAgents() ([]models.Agent, error) {
+// GetAllActiveAgents mocks base method.
+func (m *MockDataBaseLayer) GetAllActiveAgents() ([]models.Agent, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAllAgents")
+	ret := m.ctrl.Call(m, "GetAllActiveAgents")
 	ret0, _ := ret[0].([]models.Agent)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetAllAgents indicates an expected call of GetAllAgents.
-func (mr *MockDataBaseLayerMockRecorder) GetAllAgents() *gomock.Call {
+// GetAllActiveAgents indicates an expected call of GetAllActiveAgents.
+func (mr *MockDataBaseLayerMockRecorder) GetAllActiveAgents() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllAgents", reflect.TypeOf((*MockDataBaseLayer)(nil).GetAllAgents))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllActiveAgents", reflect.TypeOf((*MockDataBaseLayer)(nil).GetAllActiveAgents))
 }
 
 // GetRestaurantMenu mocks base method.

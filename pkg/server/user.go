@@ -2,9 +2,9 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"math/rand"
-	Mail "mock-grpc/mail"
 	model "mock-grpc/models"
 	"mock-grpc/utils"
 	pb "mock-grpc/zomato-proto"
@@ -22,12 +22,12 @@ func isValidEmail(email string) bool {
 func (s *ZomatoServer) CreateUser(ctx context.Context, in *pb.NewUser) (*pb.User, error) {
 	log.Printf("createUser method called from server side")
 	// validate input
-	// if in.GetName() == "" || in.GetPhone() == "" || in.GetAddress() == "" || in.GetEmail() == "" {
-	// 	return nil, fmt.Errorf("invalid input")
-	// }
-	// if !isValidEmail(in.GetEmail()) {
-	// 	return nil, fmt.Errorf("invalid email")
-	// }
+	if in.GetName() == "" || in.GetPhone() == "" || in.GetAddress() == "" || in.GetEmail() == "" {
+		return nil, fmt.Errorf("invalid input")
+	}
+	if !isValidEmail(in.GetEmail()) {
+		return nil, fmt.Errorf("invalid email")
+	}
 
 	newUser := model.User{
 		Name:    in.GetName(),
@@ -38,13 +38,24 @@ func (s *ZomatoServer) CreateUser(ctx context.Context, in *pb.NewUser) (*pb.User
 	err := s.Db.CreateUser(newUser)
 	utils.CheckError(err)
 	log.Printf("%v\n ", in.GetEmail())
-	Mail.Mail(in.GetEmail())
+	// handle Mail.Mail asynchronously using go routines
+	// email := in.GetEmail()
+	// resultChannel := make(chan error)
+	// go func() {
+	// 	resultChannel <- Mail.Mail(email)
+	// }()
+	// mailResult := <-resultChannel
+
+	// if mailResult != nil {
+	// 	return nil, fmt.Errorf("failed to send email: %v", mailResult)
+	// }
+	// Mail.Mail(in.GetEmail())
 	return &pb.User{
-		Id:      in.GetId(),
-		Name:    in.GetName(),
-		Phone:   in.GetPhone(),
-		Address: in.GetAddress(),
-		Email:   in.GetEmail()}, nil
+		Id:      int64(newUser.ID),
+		Name:    newUser.Name,
+		Phone:   newUser.Phone,
+		Address: newUser.Address,
+		Email:   newUser.Email}, err
 }
 
 func (s *ZomatoServer) GetUsers(ctx context.Context, in *pb.VoidUserRequest) (*pb.AllUsers, error) {
@@ -59,18 +70,18 @@ func (s *ZomatoServer) GetUsers(ctx context.Context, in *pb.VoidUserRequest) (*p
 
 func (s *ZomatoServer) UpdateUser(ctx context.Context, in *pb.User) (*pb.User, error) {
 	log.Printf("updateUser method called from server side")
-	currentUser := model.User{
+	updatedUser := model.User{
 		Name:    in.GetName(),
 		Phone:   in.GetPhone(),
 		Address: in.GetAddress(),
 		Email:   in.GetEmail(),
 	}
-	err := s.Db.UpdateUser(currentUser)
+	err := s.Db.UpdateUser(updatedUser)
 	return &pb.User{
-		Name:    in.GetName(),
-		Phone:   in.GetPhone(),
-		Address: in.GetAddress(),
-		Email:   in.GetEmail()}, err
+		Name:    updatedUser.Name,
+		Phone:   updatedUser.Phone,
+		Address: updatedUser.Address,
+		Email:   updatedUser.Email}, err
 
 }
 
@@ -96,22 +107,10 @@ func (s *ZomatoServer) PlaceOrder(ctx context.Context, in *pb.OrderRequest) (*pb
 	//extract his id (agent_id)
 	//get the id of the user who is calling this method (user_id)
 	//create a new order with the agent_id and user_id and some restaurant_id
-	totalAgentData := []*pb.Agent{}
-	totalAgents, err := s.Db.GetAllAgents()
-	// fmt.Print(len(totalAgents))
-	for _, agent := range totalAgents {
-		if agent.IsActive == true {
-			totalAgentData = append(totalAgentData, &pb.Agent{
-				Id:             int64(agent.ID),
-				Name:           agent.Name,
-				IsActive:       agent.IsActive,
-				CurrentOrderId: int64(agent.CurrentOrderId),
-			})
-		}
-	}
+	totalAgents, err := s.Db.GetAllActiveAgents()
 	utils.CheckError(err)
-	index := rand.Intn(len(totalAgentData))
-	randomAgentID := uint(totalAgentData[index].Id)
+	index := rand.Intn(len(totalAgents))
+	randomAgentID := uint(totalAgents[index].ID)
 	userID := uint(in.GetUserID())
 	restaurantID := uint(in.GetRestaurantID())
 	newOrderRequest := model.Order{
@@ -121,7 +120,7 @@ func (s *ZomatoServer) PlaceOrder(ctx context.Context, in *pb.OrderRequest) (*pb
 	}
 	errorResult := s.Db.CreateOrder(newOrderRequest)
 	return &pb.Order{
-		UserID:       in.GetUserID(),
-		RestaurantID: in.GetRestaurantID(),
+		UserID:       int64(newOrderRequest.UserId),
+		RestaurantID: int64(newOrderRequest.RestaurantId),
 	}, errorResult
 }

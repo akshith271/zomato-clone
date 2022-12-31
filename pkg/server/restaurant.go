@@ -21,12 +21,12 @@ func (s *ZomatoServer) CreateRestaurant(ctx context.Context, in *pb.NewRestauran
 	err := s.Db.CreateRestaurant(newRestaurant)
 	fmt.Println(newRestaurant)
 	return &pb.Restaurant{
-		Name:     in.GetName(),
-		Address:  in.GetAddress(),
-		Timings:  in.GetTimings(),
-		Email:    in.GetEmail(),
-		Password: in.GetPassword(),
-		IsActive: in.GetIsActive()}, err
+		Name:     newRestaurant.Name,
+		Address:  newRestaurant.Address,
+		Timings:  newRestaurant.Timings,
+		Email:    newRestaurant.Email,
+		Password: newRestaurant.Password,
+		IsActive: newRestaurant.IsActive}, err
 }
 
 func (s *ZomatoServer) GetRestaurantMenu(ctx context.Context, in *pb.RestaurantMenuRequest) (*pb.Menu, error) {
@@ -51,14 +51,14 @@ func (s *ZomatoServer) GetRestaurantMenu(ctx context.Context, in *pb.RestaurantM
 
 func (s *ZomatoServer) UpdateRestaurant(ctx context.Context, in *pb.Restaurant) (*pb.Restaurant, error) {
 	log.Printf("updateRestaurant method called from server side")
-	restaurant := model.Restaurant{
+	updatedRestaurant := model.Restaurant{
 		Name:    in.GetName(),
 		Address: in.GetAddress(),
 		Email:   in.GetEmail(),
 	}
-	err := s.Db.UpdateRestaurant(restaurant)
+	err := s.Db.UpdateRestaurant(updatedRestaurant)
 	return &pb.Restaurant{
-		Name:    in.GetName(),
-		Address: in.GetAddress(),
-		Email:   in.GetEmail()}, err
+		Name:    updatedRestaurant.Name,
+		Address: updatedRestaurant.Address,
+		Email:   updatedRestaurant.Email}, err
 }
